@@ -1,0 +1,261 @@
+{
+  "weapons": {
+    "simple_melee": [
+      {
+        "id": "club",
+        "name": "Club",
+        "cost": 0.1,
+        "damage": "1d4 Bludgeoning",
+        "weight": 2,
+        "properties": ["Light"]
+      },
+      {
+        "id": "dagger",
+        "name": "Dagger",
+        "cost": 2,
+        "damage": "1d4 Piercing",
+        "weight": 1,
+        "properties": ["Finesse", "Light", "Thrown (20/60)"]
+      },
+      {
+        "id": "quarterstaff",
+        "name": "Quarterstaff",
+        "cost": 0.2,
+        "damage": "1d6 Bludgeoning",
+        "weight": 4,
+        "properties": ["Versatile (1d8)"]
+      },
+      {
+        "id": "spear",
+        "name": "Spear",
+        "cost": 1,
+        "damage": "1d6 Piercing",
+        "weight": 3,
+        "properties": ["Thrown (20/60)", "Versatile (1d8)"]
+      }
+    ],
+    "simple_ranged": [
+      {
+        "id": "sling",
+        "name": "Sling",
+        "cost": 0.1,
+        "damage": "1d4 Bludgeoning",
+        "weight": 0,
+        "properties": ["Ammunition (30/120)"]
+      },
+      {
+        "id": "shortbow",
+        "name": "Shortbow",
+        "cost": 25,
+        "damage": "1d6 Piercing",
+        "weight": 2,
+        "properties": ["Ammunition (80/320)", "Two-handed"]
+      }
+    ],
+    "martial_melee": [
+      {
+        "id": "longsword",
+        "name": "Longsword",
+        "cost": 15,
+        "damage": "1d8 Slashing",
+        "weight": 3,
+        "properties": ["Versatile (1d10)"]
+      },
+      {
+        "id": "battleaxe",
+        "name": "Battleaxe",
+        "cost": 10,
+        "damage": "1d8 Slashing",
+        "weight": 4,
+        "properties": ["Versatile (1d10)"]
+      },
+      {
+        "id": "greatsword",
+        "name": "Greatsword",
+        "cost": 50,
+        "damage": "2d6 Slashing",
+        "weight": 6,
+        "properties": ["Heavy", "Two-handed"]
+      }
+    ],
+    "martial_ranged": [
+      {
+        "id": "longbow",
+        "name": "Longbow",
+        "cost": 50,
+        "damage": "1d8 Piercing",
+        "weight": 2,
+        "properties": ["Ammunition (150/600)", "Heavy", "Two-handed"]
+      }
+    ]
+  },
+  "armor": {
+    "light": [
+      {
+        "id": "leather",
+        "name": "Leather Armor",
+        "cost": 10,
+        "ac": "11 + Dex Mod",
+        "weight": 10,
+        "notes": "Stealth-friendly"
+      },
+      {
+        "id": "studded_leather",
+        "name": "Studded Leather",
+        "cost": 45,
+        "ac": "12 + Dex Mod",
+        "weight": 13,
+        "notes": "Better protection for light armor users"
+      }
+    ],
+    "medium": [
+      {
+        "id": "chain_shirt",
+        "name": "Chain Shirt",
+        "cost": 50,
+        "ac": "13 + Dex Mod (max 2)",
+        "weight": 20,
+        "notes": "Balanced protection"
+      },
+      {
+        "id": "half_plate",
+        "name": "Half Plate",
+        "cost": 750,
+        "ac": "15 + Dex Mod (max 2)",
+        "weight": 40,
+        "notes": "Disadvantage on Stealth checks"
+      }
+    ],
+    "heavy": [
+      {
+        "id": "plate",
+        "name": "Plate Armor",
+        "cost": 1500,
+        "ac": "18",
+        "weight": 65,
+        "notes": "Strength 15 required, Stealth disadvantage"
+      }
+    ],
+    "shields": [
+      {
+        "id": "shield",
+        "name": "Shield",
+        "cost": 10,
+        "ac": "+2 AC",
+        "weight": 6,
+        "notes": "Add to AC when equipped"
+      }
+    ]
+  },
+  "gear": [
+    {
+      "id": "backpack",
+      "name": "Backpack",
+      "cost": 2,
+      "weight": 5,
+      "description": "Holds equipment"
+    },
+    {
+      "id": "bedroll",
+      "name": "Bedroll",
+      "cost": 1,
+      "weight": 5,
+      "description": "For sleeping during travel"
+    },
+    {
+      "id": "rope",
+      "name": "Rope (50 ft.)",
+      "cost": 1,
+      "weight": 10,
+      "description": "Comes in hempen or silk varieties"
+    },
+    {
+      "id": "torch",
+      "name": "Torch",
+      "cost": 0.01,
+      "weight": 1,
+      "description": "Burns for 1 hour"
+    },
+    {
+      "id": "waterskin",
+      "name": "Waterskin",
+      "cost": 0.2,
+      "weight": 5,
+      "description": "Holds water"
+    },
+    {
+      "id": "rations",
+      "name": "Rations (1 day)",
+      "cost": 0.5,
+      "weight": 2,
+      "description": "Preserved food for travel"
+    },
+    {
+      "id": "explorers_pack",
+      "name": "Explorer's Pack",
+      "cost": 10,
+      "weight": 0,
+      "description": "Includes basics: torches, rope, rations, and more"
+    },
+    {
+      "id": "holy_symbol",
+      "name": "Holy Symbol",
+      "cost": 5,
+      "weight": 1,
+      "description": "Focus for Clerics or Paladins"
+    }
+  ],
+  "tools": [
+    {
+      "id": "thieves_tools",
+      "name": "Thieves' Tools",
+      "cost": 25,
+      "weight": 1,
+      "description": "Used to disarm traps and pick locks"
+    },
+    {
+      "id": "smiths_tools",
+      "name": "Smith's Tools",
+      "cost": 20,
+      "weight": 8,
+      "description": "Crafting and repairing metal objects"
+    },
+    {
+      "id": "herbalism_kit",
+      "name": "Herbalism Kit",
+      "cost": 5,
+      "weight": 3,
+      "description": "Used to make healing potions or identify plants"
+    },
+    {
+      "id": "dice_set",
+      "name": "Dice Set",
+      "cost": 0.1,
+      "weight": 0,
+      "description": "Gambling or games of chance"
+    },
+    {
+      "id": "flute",
+      "name": "Flute",
+      "cost": 2,
+      "weight": 1,
+      "description": "A musical instrument"
+    }
+  ],
+  "ammunition": [
+    {
+      "id": "arrows",
+      "name": "Arrows (20)",
+      "cost": 1,
+      "weight": 1,
+      "description": "Used with bows"
+    },
+    {
+      "id": "crossbow_bolts",
+      "name": "Crossbow Bolts (20)",
+      "cost": 1,
+      "weight": 1.5,
+      "description": "Used with crossbows"
+    }
+  ]
+}
