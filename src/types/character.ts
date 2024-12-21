@@ -1,87 +1,168 @@
-// Race interface
+export interface Character {
+  id: string;
+  name: string;
+  level: number;
+  race: Race;
+  classes: Class[];
+  stats: Stats[];
+  hitPoints: HitPoints;
+  armorClass: number;
+  initiative: number;
+  speed: number;
+  inventory: Inventory[];
+  spells: Spells;
+  features: Feature[];
+  conditions: Condition[];
+  notes: string[];
+  background?: Background;
+  currencies: Currencies;
+  preferences: Preferences;
+}
+
 export interface Race {
-  baseRaceName: string; // Name of the base race, e.g., "Elf"
-  subRaceName?: string; // Optional subrace name, e.g., "High Elf"
-  isHomebrew?: boolean; // Indicates if the race is homebrew
+  baseRaceName: string;
+  subRaceName?: string;
+  isHomebrew: boolean;
+  racialTraits: RacialTrait[];
 }
 
-// Class interface
+export interface RacialTrait {
+  name: string;
+  description: string;
+  snippet: string;
+}
+
 export interface Class {
-  name: string; // Class name, e.g., "Paladin"
-  level: number; // Level in the class
-  hitDice?: string; // Optional hit dice for the class, e.g., "d10"
-  definition?: { 
-    name: string; // Full name of the class
-    description: string; // Detailed class description
-  };
-  subclass?: { 
-    name: string; // Optional subclass name, e.g., "Oath of Devotion"
-  };
-  isHomebrew?: boolean; // Indicates if the class is homebrew
+  id: string;
+  name: string;
+  level: number;
+  hitDice: number;
+  isStartingClass: boolean;
+  definition: ClassDefinition;
+  subclass?: Subclass;
+  isHomebrew: boolean;
 }
 
-// Feat interface
-export interface Feat {
-  id: string; // Unique feat identifier
-  name: string; // Feat name
-  description: string; // Detailed feat description
-  isHomebrew?: boolean; // Indicates if the feat is homebrew
+export interface ClassDefinition {
+  name: string;
+  description: string;
+  hitDice: number;
+  spellcastingAbility?: number;
+  classFeatures: ClassFeature[];
 }
 
-// Spells interface
-export interface Spell {
-  id: string; // Unique spell identifier
-  name: string; // Spell name
-  level: number; // Spell level
-  description: string; // Detailed spell description
-  prepared?: boolean; // Is the spell prepared?
-  isHomebrew?: boolean; // Indicates if the spell is homebrew
+export interface Subclass {
+  name: string;
+  description: string;
+  features: ClassFeature[];
 }
 
-// Inventory Item interface
-export interface InventoryItem {
-  id: string; // Unique item identifier
-  name: string; // Item name
-  type: string; // Item type, e.g., "Armor", "Weapon"
-  equipped: boolean; // Is the item equipped?
-  definition?: { 
-    description: string; 
-    armorClass?: number; // For armor items
-    damage?: string; // For weapon items
-  };
-  isHomebrew?: boolean; // Indicates if the item is homebrew
-}
-export interface Background {
-  definition: string;
-  customBackground?: { 
-    name: string;
-    description: string;
-  };
+export interface ClassFeature {
+  name: string;
+  description: string;
+  level: number;
+  isHomebrew: boolean;
 }
 
-export interface BackgroundDetails {
-  definition: string;
-  hasCustomBackground: boolean;
-  customBackground?: { 
-    name: string;
-    description: string;
-  };
-}
-
-export interface AbilityScore {
-  id: number; // 1-6 for STR, DEX, CON, INT, WIS, CHA
+export interface Stats {
+  id: number;
+  name: string;
   value: number;
+  modifier: number;
+  bonusValue: number | null;
+  overrideValue: number | null;
 }
 
-export interface Modifier {
+export interface HitPoints {
+  current: number;
+  max: number;
+  temp: number;
+  bonusHitPoints: number;
+  overrideHitPoints: number | null;
+}
+
+export interface Inventory {
+  id: string;
+  name: string;
+  type: string;
+  equipped: boolean;
+  quantity: number;
+  weight: number;
+  definition: ItemDefinition;
+  isAttuned: boolean;
+  isHomebrew: boolean;
+}
+
+export interface ItemDefinition {
+  description: string;
+  armorClass?: number;
+  damage?: ItemDamage;
+  properties?: string[];
+  rarity: string;
+  magic: boolean;
+  cost?: number;
+  requiresAttunement: boolean;
+}
+
+export interface ItemDamage {
+  diceCount: number;
+  diceValue: number;
+  diceString: string;
+  type: string;
+}
+
+export interface Spells {
+  class: ClassSpell[];
+  race: RaceSpell[];
+  item: ItemSpell[];
+}
+
+export interface ClassSpell {
+  id: string;
+  name: string;
+  level: number;
+  school: string;
+  castingTime: number;
+  range: SpellRange;
+  components: string[];
+  duration: SpellDuration;
+  description: string;
+  prepared: boolean;
+  alwaysPrepared: boolean;
+  ritual: boolean;
+  concentration: boolean;
+  attackType?: number;
+  saveDC?: number;
+  damage?: SpellDamage[];
+}
+
+export interface SpellRange {
+  origin: string;
+  value: number;
+  aoeType?: string;
+  aoeValue?: number;
+}
+
+export interface SpellDuration {
   type: string;
   value: number;
+  unit: string;
 }
 
-export interface Skill {
+export interface SpellDamage {
+  diceString: string;
+  type: string;
+  scaling?: any;
+}
+
+export interface RaceSpell extends Omit<ClassSpell, 'prepared'> {}
+export interface ItemSpell extends Omit<ClassSpell, 'prepared'> {}
+
+export interface Feature {
   name: string;
-  proficient: boolean;
-  modifier: number;
+  description: string;
+  source: string;
+  level?: number;
 }
 
 export interface Condition {
@@ -90,33 +171,25 @@ export interface Condition {
   description: string;
 }
 
-export interface HitPoints {
-  current: number;
-  max: number;
-  temp?: number;
+export interface Background {
+  name: string;
+  description: string;
+  feature: {
+    name: string;
+    description: string;
+  };
+  isCustom: boolean;
 }
 
-// Character interface (additionally includes homebrew check for character itself)
-export interface Character {
-  id?: string; // Unique character identifier
-  name: string; // Character name
-  level: number; // Total character level
-  race?: Race; // Race information
-  classes?: Class[]; // Array of class objects
-  background?: Background; // Background information
-  backgroundDetails?: BackgroundDetails; // Optional detailed background
-  stats?: AbilityScore[]; // Array of ability scores
-  modifiers?: Modifier[]; // Array of modifiers
-  inventory?: InventoryItem[]; // Inventory items
-  feats?: Feat[]; // Array of feats
-  spells?: Spell[]; // Array of spells
-  skills?: Skill[]; // Array of skills
-  conditions?: Condition[]; // Array of conditions
-  hitPoints?: HitPoints; // Hit points information
-  armorClass?: number; // Armor class
-  initiative?: number; // Initiative bonus
-  speed?: number; // Speed in feet
-  inspiration?: boolean; // Does the character have inspiration?
-  notes?: string[]; // Array of character notes
-  isHomebrew?: boolean; // Is this a homebrew character?
+export interface Currencies {
+  cp?: number;
+  sp?: number;
+  ep?: number;
+  gp?: number;
+  pp?: number;
+}
+
+export interface Preferences {
+  useHomebrewContent?: boolean;
+  [key: string]: any;
 }

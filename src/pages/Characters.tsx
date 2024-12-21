@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCharacterStore } from '../store/characterStore';
-import { Character } from '../types/character'; // Ensure this is the correct path
+import { Character } from '../types/character';
 import JSONCharacterImport from '../components/character-import/JSONCharacterImport';
 import CharacterCard from '../components/characters/CharacterCard';
 import CharacterSheet from '../components/characters/CharacterSheet';
@@ -37,34 +37,33 @@ export default function Characters() {
         <div className="p-4 border-2 border-dashed border-purple-300 rounded-lg">
           <div className="text-center">
             <FileJson className="h-12 w-12 text-purple-600 mx-auto mb-2" />
-            <h3 className="text-lg font-semibold mb-1">Need Help?</h3>
+            <h3 className="text-lg font-semibold mb-1">Need help?</h3>
             <p className="text-sm text-gray-600 mb-4">
-              You can import characters from JSON character sheets or create a new character from scratch.
+              <a 
+                href="https://www.cbr.com/dnd-beyond-alternatives-import-guide/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-purple-600 hover:text-purple-700"
+              >
+                Follow this guide
+              </a>
             </p>
-            <div className="space-y-2">
-              <a href="#" className="block text-sm text-purple-600 hover:text-purple-700">
-                Download Sample Character Sheet
-              </a>
-              <a href="#" className="block text-sm text-purple-600 hover:text-purple-700">
-                View Supported PDF Formats
-              </a>
-            </div>
           </div>
         </div>
       </div>
 
-      {/* Character List Section */}
+      {/* Character List */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {characters.map((character, index) => (
+        {characters.map((character) => (
           <CharacterCard
-            key={index}
+            key={character.id}
             character={character}
             onViewDetails={() => handleViewDetails(character)}
           />
         ))}
       </div>
 
-      {/* No Characters Message */}
+      {/* Empty State */}
       {characters.length === 0 && (
         <div className="text-center py-12 bg-white rounded-lg shadow-sm">
           <FileJson className="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -72,18 +71,19 @@ export default function Characters() {
           <p className="text-gray-500 mb-6">
             Create a new character or import an existing one to get started
           </p>
-          <div className="flex justify-center space-x-4">
-            <Button variant="primary" icon={UserPlus} onClick={handleCreateCharacter}>
-              Create Character
-            </Button>
-          </div>
+          <Button variant="primary" icon={UserPlus} onClick={handleCreateCharacter}>
+            Create Character
+          </Button>
         </div>
       )}
 
       {/* Character Sheet Modal */}
       {selectedCharacter && (
-        <Modal onClose={() => setSelectedCharacter(null)} fullScreen={true}>
-          <CharacterSheet character={selectedCharacter} onClose={() => setSelectedCharacter(null)} />
+        <Modal onClose={() => setSelectedCharacter(null)} fullScreen>
+          <CharacterSheet 
+            character={selectedCharacter} 
+            onClose={() => setSelectedCharacter(null)} 
+          />
         </Modal>
       )}
     </div>
