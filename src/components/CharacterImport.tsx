@@ -14,7 +14,13 @@ export default function CharacterImport() {
     reader.onload = (e) => {
       const text = e.target?.result;
       if (typeof text === 'string') {
-        importCharacter(text);
+        try {
+          const characterData = JSON.parse(text);
+          importCharacter(characterData);
+        } catch (error) {
+          console.error('Failed to parse JSON:', error);
+          // Handle error appropriately
+        }
       }
     };
     reader.readAsText(file);
