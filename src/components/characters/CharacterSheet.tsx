@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Character } from '../../types/character';
-import { Shield, Heart, Dumbbell, Book, Scroll, Wand2, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Character, Stats } from '../../types/character';
+import { Shield, Heart, Dumbbell, Book, Scroll, Wand2, X, Sword } from 'lucide-react';
 import AbilityScores from './sheet/AbilityScores';
 import SpellList from './sheet/SpellList';
 import InventoryList from './sheet/InventoryList';
@@ -14,26 +14,46 @@ interface CharacterSheetProps {
 export default function CharacterSheet({ character, onClose }: CharacterSheetProps) {
   const [activeTab, setActiveTab] = useState('stats');
 
-  // Safely handle optional values with null coalescing
+  // Extract and safely handle values
   const hitPoints = {
-    current: character.hitPoints?.current ?? 0,
-    max: character.hitPoints?.max ?? 0,
-    temp: character.hitPoints?.temp ?? 0
+    current: character.hitPoints.current,
+    max: character.hitPoints.base,
+    temp: character.hitPoints.temp
   };
 
-  const displayInitiative = character.initiative ?? 0;
-  const displayArmorClass = character.armorClass ?? 10;
-  const features = character.features ?? [];
-  const inventory = character.inventory ?? [];
-  const spells = character.spells?.class ?? [];
-  const stats = character.stats ?? [];
+  const displayInitiative = character.stats.bonus.dexterity ?? 0;
+  const displayArmorClass = 10 + (character.stats.bonus.dexterity ?? 0);
+
+  interface DisplayStat extends Stats {
+    id: string;
+    name: string;
+    value: number;
+    modifier: number;
+  }
+
+  // Convert stats to array format for display
+  const statsArray: DisplayStat[] = Object.entries(character.stats.base).map(([name, value]) => ({
+    base: character.stats.base,
+    bonus: character.stats.bonus,
+    override: character.stats.override,
+    id: name,
+    name: name.charAt(0).toUpperCase() + name.slice(1),
+    value: value,
+    modifier: Math.floor((value - 10) / 2)
+  }));
 
   const tabs = [
-    { id: 'stats', name: 'Abilities', icon: Book, component: <AbilityScores stats={stats} /> },
-    { id: 'features', name: 'Features', icon: Scroll, component: <FeatureList features={features} /> },
-    { id: 'inventory', name: 'Inventory', icon: Shield, component: <InventoryList inventory={inventory} /> },
-    { id: 'spells', name: 'Spells', icon: Wand2, component: <SpellList spells={spells} /> }
+    { id: 'stats', name: 'Abilities', icon: Book, component: <AbilityScores stats={statsArray} /> },
+    { id: 'features', name: 'Features', icon: Scroll, component: <FeatureList features={character.features ?? []} /> },
+    { id: 'inventory', name: 'Inventory', icon: Shield, component: <InventoryList inventory={character.inventory ?? []} /> },
+    { id: 'spells', name: 'Spells', icon: Wand2, component: <SpellList spells={character.spells ?? []} /> }
   ];
+
+  useEffect(() => {
+    if (!character) {
+      console.warn('Character data is missing.');
+    }
+  }, [character]);
 
   return (
     <div className="h-full flex flex-col">
@@ -43,8 +63,10 @@ export default function CharacterSheet({ character, onClose }: CharacterSheetPro
           <div>
             <h1 className="text-3xl font-bold">{character.name}</h1>
             <p className="text-purple-200">
-              Level {character.level} {character.race?.baseRaceName} {character.classes?.[0]?.name}
-              {character.classes?.[0]?.subclass?.name && ` (${character.classes[0].subclass.name})`}
+              Level {character.classes.reduce((sum, cls) => sum + cls.level, 0)} 
+              {character.race} 
+              {character.classes.map(cls => cls.definition.name).join(' / ')}
+              {character.classes[0]?.subclassDefinition?.name && ` (${character.classes[0].subclassDefinition.name})`}
             </p>
           </div>
           <button 
@@ -114,6 +136,24 @@ export default function CharacterSheet({ character, onClose }: CharacterSheetPro
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
         {tabs.find(tab => tab.id === activeTab)?.component}
+
+        {/* Features Section */}
+        <div className="mt-8">
+          <h2 className="text-xl font-bold text-purple-900 mb-4">Features & Abilities</h2>
+          
+          {character.features?.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold text-purple-800 mb-2">Class Features</h3>
+              <ul>
+                {character.features.map((feature, index) => (
+                  <li key={index} className="text-purple-700">
+                    {feature.name}: {feature.description}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -1,0 +1,33 @@
+.character-sheet {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .header {
+    background-color: #4B3F72;
+    color: white;
+    padding: 20px;
+  }
+  
+  .core-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }
+  
+  .tab-navigation button {
+    padding: 16px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .tab-navigation button:hover {
+    color: #6B46C1;
+  }
+  
+  .content {
+    padding: 20px;
+    background-color: #F7FAFC;
+  }
+  

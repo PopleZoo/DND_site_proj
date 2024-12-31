@@ -1,8 +1,4 @@
-import { Character, Race, Class, Stats, HitPoints, Inventory, Spells } from '../../../types/character';
-import { mapStats } from './mappers/statsMapper';
-import { mapClasses } from './mappers/classMapper';
-import { mapInventory } from './mappers/inventoryMapper';
-import { mapSpells } from './mappers/spellMapper';
+import { Character } from '../../../types/character';
 
 export class DndBeyondImporter {
   static importCharacter(jsonData: string): Character {
@@ -10,119 +6,102 @@ export class DndBeyondImporter {
       const data = typeof jsonData === 'string' ? JSON.parse(jsonData) : jsonData;
       const characterData = data.data;
 
-      return {
-        id: characterData.id.toString(),
-        name: characterData.name,
-        level: this.calculateLevel(characterData.classes),
-        race: this.mapRace(characterData.race),
-        classes: mapClasses(characterData.classes),
-        stats: mapStats(characterData.stats),
-        hitPoints: this.mapHitPoints(characterData),
-        armorClass: this.calculateArmorClass(characterData),
-        initiative: this.calculateInitiative(characterData),
-        speed: this.calculateSpeed(characterData),
-        inventory: mapInventory(characterData.inventory),
-        spells: mapSpells(characterData.classSpells),
-        features: this.mapFeatures(characterData),
-        conditions: characterData.conditions || [],
-        notes: characterData.notes?.personalNotes || [],
-        background: this.mapBackground(characterData.background),
-        currencies: characterData.currencies || {},
-        preferences: characterData.preferences || {}
+      // Map all character data for comprehensive storage
+      const mappedCharacter: Character = {
+      id: characterData.id,
+      userId: characterData.userId,
+      username: characterData.username,
+      name: characterData.name,
+      level: characterData.level,
+        isAssignedToPlayer: characterData.isAssignedToPlayer,
+        readonlyUrl: characterData.readonlyUrl,
+        decorations: characterData.decorations,
+        personalDetails: {
+          socialName: characterData.socialName,
+          gender: characterData.gender,
+          faith: characterData.faith,
+          age: characterData.age,
+          hair: characterData.hair,
+          eyes: characterData.eyes,
+          skin: characterData.skin,
+          height: characterData.height,
+          weight: characterData.weight,
+        },
+        inspiration: characterData.inspiration || false,
+        hitPoints: {
+          base: characterData.baseHitPoints,
+          current: characterData.baseHitPoints - (characterData.removedHitPoints || 0),
+          temp: characterData.temporaryHitPoints || 0,
+          bonus: characterData.bonusHitPoints || 0,
+          override: characterData.overrideHitPoints || null,
+        },
+        xp: {
+          current: characterData.currentXp,
+          adjustment: characterData.adjustmentXp || 0,
+        },
+        alignmentId: characterData.alignmentId,
+        lifestyleId: characterData.lifestyleId,
+        stats: {
+          base: characterData.stats,
+          bonus: characterData.bonusStats,
+          override: characterData.overrideStats,
+        },
+        background: characterData.background,
+        race: characterData.race,
+        raceDefinition: {
+          id: characterData.raceDefinitionId,
+          typeId: characterData.raceDefinitionTypeId,
+        },
+        notes: characterData.notes,
+        traits: characterData.traits,
+        preferences: characterData.preferences,
+        configuration: characterData.configuration,
+        lifestyle: characterData.lifestyle,
+        inventory: characterData.inventory,
+        currencies: characterData.currencies,
+        classes: characterData.classes,
+        feats: characterData.feats,
+        features: characterData.features,
+        customAdjustments: {
+          defense: characterData.customDefenseAdjustments,
+          senses: characterData.customSenses,
+          speeds: characterData.customSpeeds,
+          proficiencies: characterData.customProficiencies,
+          actions: characterData.customActions,
+        },
+        characterValues: characterData.characterValues,
+        conditions: characterData.conditions,
+        deathSaves: characterData.deathSaves,
+        spellSlots: characterData.spellSlots,
+        pactMagic: characterData.pactMagic,
+        sourceCategories: characterData.activeSourceCategories,
+        spells: characterData.spells,
+        options: characterData.options,
+        choices: characterData.choices,
+        actions: characterData.actions,
+        modifiers: characterData.modifiers,
+        classSpells: characterData.classSpells,
+        customItems: characterData.customItems,
+        campaign: characterData.campaign,
+        creatures: characterData.creatures,
+        optionalFeatures: {
+          origins: characterData.optionalOrigins,
+          classFeatures: characterData.optionalClassFeatures,
+        },
+        meta: {
+          dateModified: characterData.dateModified,
+          providedFrom: characterData.providedFrom,
+          canEdit: characterData.canEdit,
+          status: characterData.status,
+          statusSlug: characterData.statusSlug,
+          campaignSetting: characterData.campaignSetting,
+        },
       };
+
+      return mappedCharacter;
     } catch (error) {
-      console.error('Failed to parse character data:', error);
+      console.error('Failed to process character data:', error);
       throw new Error('Invalid character data format');
     }
-  }
-
-  private static calculateLevel(classes: any[]): number {
-    return classes.reduce((total: number, cls: any) => total + cls.level, 0);
-  }
-
-  private static mapRace(raceData: any): Race {
-    return {
-      baseRaceName: raceData.baseRaceName,
-      subRaceName: raceData.subRaceName || undefined,
-      isHomebrew: raceData.isHomebrew,
-      racialTraits: raceData.racialTraits?.map((trait: any) => ({
-        name: trait.definition.name,
-        description: trait.definition.description,
-        snippet: trait.definition.snippet
-      })) || []
-    };
-  }
-
-  private static mapHitPoints(data: any): HitPoints {
-    return {
-      current: data.baseHitPoints - (data.removedHitPoints || 0),
-      max: data.baseHitPoints,
-      temp: data.temporaryHitPoints || 0,
-      bonusHitPoints: data.bonusHitPoints || 0,
-      overrideHitPoints: data.overrideHitPoints || null
-    };
-  }
-
-  private static calculateArmorClass(data: any): number {
-    let ac = 10;
-    const equippedArmor = data.inventory.find((item: any) => 
-      item.equipped && item.definition.armorClass
-    );
-    
-    if (equippedArmor) {
-      ac = equippedArmor.definition.armorClass;
-    }
-    
-    return ac;
-  }
-
-  private static calculateInitiative(data: any): number {
-    const dexMod = Math.floor((data.stats[1].value - 10) / 2);
-    return dexMod;
-  }
-
-  private static calculateSpeed(data: any): number {
-    return data.race?.weightSpeeds?.normal?.walk || 30;
-  }
-
-  private static mapFeatures(data: any): any[] {
-    const features: any[] = [];
-    
-    // Map class features
-    data.classes?.forEach((cls: any) => {
-      cls.classFeatures?.forEach((feature: any) => {
-        features.push({
-          name: feature.definition.name,
-          description: feature.definition.description,
-          source: 'Class',
-          level: feature.requiredLevel
-        });
-      });
-    });
-
-    // Map racial features
-    data.race?.racialTraits?.forEach((trait: any) => {
-      features.push({
-        name: trait.definition.name,
-        description: trait.definition.description,
-        source: 'Race'
-      });
-    });
-
-    return features;
-  }
-
-  private static mapBackground(background: any): any {
-    if (!background) return null;
-
-    return {
-      name: background.definition?.name || background.customBackground?.name,
-      description: background.definition?.description || background.customBackground?.description,
-      feature: {
-        name: background.definition?.featureName || background.customBackground?.featureName,
-        description: background.definition?.featureDescription || background.customBackground?.featureDescription
-      },
-      isCustom: background.hasCustomBackground || false
-    };
   }
 }
