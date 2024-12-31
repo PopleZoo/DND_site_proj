@@ -1,12 +1,21 @@
 import React from 'react';
-import { ClassSpell } from '../../../types/character';
+import { ClassSpell, ItemSpell, RaceSpell } from '../../../types/character';
 
 interface SpellListProps {
-  spells: ClassSpell[];
+  classSpells: ClassSpell[];
+  raceSpells: RaceSpell[];
+  itemSpells: ItemSpell[];
 }
 
-export default function SpellList({ spells = [] }: SpellListProps) {
-  if (!spells.length) {
+export default function SpellList({
+  classSpells = [],
+  raceSpells = [],
+  itemSpells = [],
+}: SpellListProps) {
+  // Combine all spells into one array
+  const allSpells = [...classSpells, ...raceSpells, ...itemSpells];
+
+  if (!allSpells.length) {
     return (
       <div className="text-center py-8 text-gray-500">
         No spells available
@@ -15,12 +24,12 @@ export default function SpellList({ spells = [] }: SpellListProps) {
   }
 
   // Group spells by level
-  const spellsByLevel = spells.reduce((acc, spell) => {
+  const spellsByLevel = allSpells.reduce((acc, spell) => {
     const level = spell.level;
     if (!acc[level]) acc[level] = [];
     acc[level].push(spell);
     return acc;
-  }, {} as Record<number, ClassSpell[]>);
+  }, {} as Record<number, (ClassSpell | RaceSpell | ItemSpell)[]>);
 
   return (
     <div className="space-y-6">
@@ -41,7 +50,7 @@ export default function SpellList({ spells = [] }: SpellListProps) {
                     </p>
                   </div>
                   <div className="flex space-x-2">
-                    {spell.prepared && (
+                    {spell.alwaysPrepared && (
                       <span className="px-2 py-1 text-xs bg-blue-100 text-blue-600 rounded">
                         Prepared
                       </span>

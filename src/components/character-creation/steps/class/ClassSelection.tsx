@@ -26,7 +26,7 @@ export default function ClassSelection() {
 
   // Reset subclass and feats when class changes
   useEffect(() => {
-    setSelectedSubclass(null);
+    setSelectedSubclass('');
     setSelectedFeats([]);
   }, [selectedClass, setSelectedSubclass, setSelectedFeats]);
 

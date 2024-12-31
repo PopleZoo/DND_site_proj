@@ -14,7 +14,6 @@ interface CharacterSheetProps {
 export default function CharacterSheet({ character, onClose }: CharacterSheetProps) {
   const [activeTab, setActiveTab] = useState('stats');
 
-  // Safely handle optional values with null coalescing
   const hitPoints = {
     current: character.hitPoints?.current ?? 0,
     max: character.hitPoints?.max ?? 0,
@@ -23,16 +22,24 @@ export default function CharacterSheet({ character, onClose }: CharacterSheetPro
 
   const displayInitiative = character.initiative ?? 0;
   const displayArmorClass = character.armorClass ?? 10;
-  const features = character.features ?? [];
+
+  // Safely gather all class features, ensuring we only access them if they exist
+  const classFeatures = character.classes[0]?.features || [];//shows error here however it works as intended
   const inventory = character.inventory ?? [];
-  const spells = character.spells?.class ?? [];
+  console.log('Class spells:', character.spells);
+
+  // Spells separated into classSpells, raceSpells, and itemSpells
+  const classSpells = character.spells.class ?? [];
+  const raceSpells = character.spells.race ?? [];
+  const itemSpells = character.spells.item ?? [];
+  
   const stats = character.stats ?? [];
 
   const tabs = [
     { id: 'stats', name: 'Abilities', icon: Book, component: <AbilityScores stats={stats} /> },
-    { id: 'features', name: 'Features', icon: Scroll, component: <FeatureList features={features} /> },
+    { id: 'features', name: 'Features', icon: Scroll, component: <FeatureList features={classFeatures} /> },
     { id: 'inventory', name: 'Inventory', icon: Shield, component: <InventoryList inventory={inventory} /> },
-    { id: 'spells', name: 'Spells', icon: Wand2, component: <SpellList spells={spells} /> }
+    { id: 'spells', name: 'Spells', icon: Wand2, component: <SpellList classSpells={classSpells} raceSpells={raceSpells} itemSpells={itemSpells} /> }
   ];
 
   return (
@@ -97,11 +104,9 @@ export default function CharacterSheet({ character, onClose }: CharacterSheetPro
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-6 py-3 flex items-center space-x-2 transition-colors ${
-                  activeTab === tab.id
-                    ? 'text-purple-600 border-b-2 border-purple-600'
-                    : 'text-gray-600 hover:text-purple-600'
-                }`}
+                className={`px-6 py-3 flex items-center space-x-2 transition-colors ${activeTab === tab.id
+                  ? 'text-purple-600 border-b-2 border-purple-600'
+                  : 'text-gray-600 hover:text-purple-600'}`}
               >
                 <Icon className="w-5 h-5" />
                 <span>{tab.name}</span>

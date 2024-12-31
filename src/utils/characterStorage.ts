@@ -1,10 +1,4 @@
-interface Character {
-  name: string;
-  level: number;
-  race?: string;
-  class?: string;
-  background?: string;
-}
+import { Character } from '../types/character';
 
 export const CharacterStorage = {
   saveCharacter: (character: Character) => {

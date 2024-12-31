@@ -1,5 +1,5 @@
 import { createIcons } from 'lucide';
-import { CharacterImporter } from './utils/characterImporter';
+import DndBeyondImporter from "./utils/characterImporter";
 import { CharacterStorage } from './utils/characterStorage';
 import { displayCharacters } from './utils/characterDisplay';
 
@@ -39,7 +39,7 @@ function handleFileImport(event: Event) {
     const reader = new FileReader();
     reader.onload = (e) => {
         try {
-            const character = CharacterImporter.importFromDndBeyond(e.target?.result as string);
+            const character = DndBeyondImporter.importCharacter(e.target?.result as string);
             CharacterStorage.saveCharacter(character);
             displayCharacters();
         } catch (error) {

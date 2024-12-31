@@ -27,7 +27,7 @@ export default function ClassFeatureList({
       <div className="grid gap-4">
         {features.map((feature) => (
           <FeatureCard 
-            key={feature.id} 
+            key={feature.name} 
             feature={feature} 
             isNew={isNew}
           />

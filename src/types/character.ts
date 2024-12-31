@@ -17,7 +17,43 @@ export interface Character {
   background?: Background;
   currencies: Currencies;
   preferences: Preferences;
+  traits?: RacialTrait[];
+  configuration?: any;
+  feats?: Feat[];
+  customAdjustments?: {
+    defense?: any;
+    senses?: any;
+    speeds?: any;
+    proficiencies?: any;
+    actions?: any;
+  };
+  characterValues?: any;
+  deathSaves?: any;
+  spellSlots?: any;
+  pactMagic?: any;
+  sourceCategories?: any;
+  options?: any;
+  choices?: any;
+  actions?: any;
+  modifiers?: any;
+  classSpells?: any;
+  customItems?: any;
+  campaign?: any;
+  creatures?: any;
+  optionalFeatures?: {
+    origins?: any;
+    classFeatures?: any;
+  };
+  meta?: {
+    dateModified?: any;
+    providedFrom?: any;
+    canEdit?: any;
+    status?: any;
+    statusSlug?: any;
+    campaignSetting?: any;
+  };
 }
+
 
 export interface Race {
   baseRaceName: string;
@@ -47,7 +83,9 @@ export interface ClassDefinition {
   name: string;
   description: string;
   hitDice: number;
-  spellcastingAbility?: number;
+  primaryAbility: string;
+  savingThrows: string[];
+  spellcastingAbility?: string;
   classFeatures: ClassFeature[];
 }
 
@@ -192,4 +230,9 @@ export interface Currencies {
 export interface Preferences {
   useHomebrewContent?: boolean;
   [key: string]: any;
+}
+export interface Feat {
+  name: string;
+  description: string;
+  source: string;
 }
