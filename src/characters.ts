@@ -1,4 +1,6 @@
 import { createIcons } from 'lucide';
+import { CharacterImporter } from './utils/characterImporter';
+import { CharacterStorage } from './utils/characterStorage';
 import { displayCharacters } from './utils/characterDisplay';
 
 // Initialize Lucide icons
@@ -37,6 +39,8 @@ function handleFileImport(event: Event) {
     const reader = new FileReader();
     reader.onload = (e) => {
         try {
+            const character = CharacterImporter.importFromDndBeyond(e.target?.result as string);
+            CharacterStorage.saveCharacter(character);
             displayCharacters();
         } catch (error) {
             console.error('Failed to import character:', error);

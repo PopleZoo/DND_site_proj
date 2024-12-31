@@ -3,6 +3,7 @@ import { useCharacterCreationStore } from '../../../../store/characterCreationSt
 import { classes } from '../../../../data/classes';
 import ClassList from './components/ClassList';
 import ClassFeatures from './features/ClassFeatures';
+import LevelOverview from './overview/LevelOverview';
 import SubclassSelection from '../SubclassSelection';
 import FeatSelection from '../feats/FeatSelection';
 import StepHeader from '../../common/StepHeader';
@@ -25,7 +26,7 @@ export default function ClassSelection() {
 
   // Reset subclass and feats when class changes
   useEffect(() => {
-    setSelectedSubclass('');
+    setSelectedSubclass(null);
     setSelectedFeats([]);
   }, [selectedClass, setSelectedSubclass, setSelectedFeats]);
 
