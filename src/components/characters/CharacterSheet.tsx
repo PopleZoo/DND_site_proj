@@ -24,14 +24,11 @@ export default function CharacterSheet({ character, onClose }: CharacterSheetPro
   const displayArmorClass = character.armorClass ?? 10;
 
   // Safely gather all class features, ensuring we only access them if they exist
-  const classFeatures = character.classes[0]?.features || [];//shows error here however it works as intended
-  const inventory = character.inventory ?? [];
-  console.log('Class spells:', character.spells);
+  const classFeatures = Array.isArray(character.classes)
+  ? character.classes.flatMap(cls => cls.features || [])
+  : [];  const inventory = character.inventory ?? [];
+  console.log('Class spells:', character);
 
-  // Spells separated into classSpells, raceSpells, and itemSpells
-  const classSpells = character.spells.class ?? [];
-  const raceSpells = character.spells.race ?? [];
-  const itemSpells = character.spells.item ?? [];
   
   const stats = character.stats ?? [];
 
@@ -39,7 +36,12 @@ export default function CharacterSheet({ character, onClose }: CharacterSheetPro
     { id: 'stats', name: 'Abilities', icon: Book, component: <AbilityScores stats={stats} /> },
     { id: 'features', name: 'Features', icon: Scroll, component: <FeatureList features={classFeatures} /> },
     { id: 'inventory', name: 'Inventory', icon: Shield, component: <InventoryList inventory={inventory} /> },
-    { id: 'spells', name: 'Spells', icon: Wand2, component: <SpellList classSpells={classSpells} raceSpells={raceSpells} itemSpells={itemSpells} /> }
+    { id: 'spells', name: 'Spells', icon: Wand2, component: <SpellList
+      classSpells={character.spells.class}
+      raceSpells={character.spells.race}
+      itemSpells={character.spells.item}
+    />
+     }
   ];
 
   return (

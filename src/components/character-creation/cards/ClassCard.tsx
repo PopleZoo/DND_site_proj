@@ -23,7 +23,7 @@ const classIcons: Record<string, React.ElementType> = {
   wizard: Book
 };
 
-export default function ClassCard({ classOption, selected, onSelect }: ClassCardProps) {
+const ClassCard: React.FC<ClassCardProps> = ({ classOption, selected, onSelect }) => {
   const Icon = classIcons[classOption.id] || Shield;
 
   return (
@@ -52,8 +52,8 @@ export default function ClassCard({ classOption, selected, onSelect }: ClassCard
         <div>
           <h3 className="text-lg font-semibold">{classOption.name}</h3>
           <div className="flex items-center space-x-2 text-sm text-gray-500">
-            <span>Hit Die: d{classOption.hitDie}</span>
-            {classOption.spellcasting && (
+            <span>Hit Die: d{classOption.hitDice}</span>
+            {classOption.definition.spellcastingAbility && (
               <>
                 <span>•</span>
                 <span>Spellcaster</span>
@@ -63,29 +63,41 @@ export default function ClassCard({ classOption, selected, onSelect }: ClassCard
         </div>
       </div>
 
-      <p className="text-sm text-gray-600 mb-4">{classOption.description}</p>
+      <p className="text-sm text-gray-600 mb-4">{classOption.definition.description}</p>
 
       <div className="space-y-3">
         <div>
           <h4 className="text-sm font-medium">Primary Ability</h4>
-          <p className="text-sm text-gray-600">{classOption.primaryAbility}</p>
+          <p className="text-sm text-gray-600">
+            {classOption.definition.primaryAbility || 'N/A'}
+          </p>
         </div>
         <div>
           <h4 className="text-sm font-medium">Saving Throws</h4>
-          <p className="text-sm text-gray-600">{classOption.savingThrows.join(', ')}</p>
+          <p className="text-sm text-gray-600">
+            {Array.isArray(classOption.definition.savingThrows)
+              ? classOption.definition.savingThrows.join(', ')
+              : 'N/A'}
+          </p>
         </div>
         <div>
           <h4 className="text-sm font-medium">Key Features</h4>
           <ul className="text-sm text-gray-600 space-y-1">
-            {classOption.features.map((feature, index) => (
-              <li key={index} className="flex items-start space-x-2">
-                <span className="text-purple-600 mt-1">•</span>
-                <span>{feature}</span>
-              </li>
-            ))}
+            {Array.isArray(classOption.definition.classFeatures) && classOption.definition.classFeatures.length > 0 ? (
+              classOption.definition.classFeatures.map((feature, index) => (
+                <li key={index} className="flex items-start space-x-2">
+                  <span className="text-purple-600 mt-1">•</span>
+                  <span>{feature.description}</span>
+                </li>
+              ))
+            ) : (
+              <li className="text-gray-500">No features available</li>
+            )}
           </ul>
         </div>
       </div>
     </button>
   );
-}
+};
+
+export default ClassCard;

@@ -82,7 +82,7 @@ export default function LevelGainsList({ level, gains, isCurrentLevel = false }:
                 <div className="font-medium">Spell Slots:</div>
                 <div className="grid grid-cols-9 gap-2 mt-1">
                   {Object.entries(spellcasting.spellSlots).map(([level, slots]) => (
-                    <div key={level} className="text-center">
+                    <div key={`${level}-${slots}-${Math.random()}`} className="text-center">
                       <div className="text-xs text-gray-500">Level {level}</div>
                       <div>{slots}</div>
                     </div>

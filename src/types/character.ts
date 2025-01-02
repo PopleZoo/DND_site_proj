@@ -20,17 +20,11 @@ export interface Character {
   traits?: RacialTrait[];
   configuration?: any;
   feats?: Feat[];
-  customAdjustments?: {
-    defense?: any;
-    senses?: any;
-    speeds?: any;
-    proficiencies?: any;
-    actions?: any;
-  };
+  customAdjustments?: CustomAdjustments;
   characterValues?: any;
-  deathSaves?: any;
-  spellSlots?: any;
-  pactMagic?: any;
+  deathSaves?: DeathSaves;
+  spellSlots?: SpellSlots;
+  pactMagic?: PactMagic;
   sourceCategories?: any;
   options?: any;
   choices?: any;
@@ -38,22 +32,11 @@ export interface Character {
   modifiers?: any;
   classSpells?: any;
   customItems?: any;
-  campaign?: any;
+  campaign?: Campaign;
   creatures?: any;
-  optionalFeatures?: {
-    origins?: any;
-    classFeatures?: any;
-  };
-  meta?: {
-    dateModified?: any;
-    providedFrom?: any;
-    canEdit?: any;
-    status?: any;
-    statusSlug?: any;
-    campaignSetting?: any;
-  };
+  optionalFeatures?: OptionalFeatures;
+  meta?: Meta;
 }
-
 
 export interface Race {
   baseRaceName: string;
@@ -87,15 +70,18 @@ export interface ClassDefinition {
   savingThrows: string[];
   spellcastingAbility?: string;
   classFeatures: ClassFeature[];
+  subclasses?: Subclass[];
 }
 
 export interface Subclass {
+  id: string;
   name: string;
   description: string;
   features: ClassFeature[];
 }
 
 export interface ClassFeature {
+  id: string;
   name: string;
   description: string;
   level: number;
@@ -231,8 +217,67 @@ export interface Preferences {
   useHomebrewContent?: boolean;
   [key: string]: any;
 }
+
 export interface Feat {
   name: string;
   description: string;
   source: string;
+}
+
+export interface CustomAdjustments {
+  defense?: any;
+  senses?: any;
+  speeds?: any;
+  proficiencies?: any;
+  actions?: any;
+}
+
+export interface DeathSaves {
+  successes: number;
+  failures: number;
+  isStable: boolean;
+}
+
+export interface SpellSlots {
+  [level: string]: {
+    max: number;
+    current: number;
+  };
+}
+
+export interface PactMagic {
+  max: number;
+  current: number;
+}
+
+export interface Campaign {
+  id: string;
+  name: string;
+  description?: string;
+}
+
+export interface OptionalFeatures {
+  origins?: any;
+  classFeatures?: any;
+}
+
+export interface LevelGains {
+  hitPoints: number;
+  proficiencyBonus: number;
+  features: ClassFeature[];
+  spellcasting?: {
+    cantripsKnown: number;
+    spellsKnown?: number;
+    spellSlots: Record<string, number>;
+  };
+  abilityScoreImprovement?: boolean;
+}
+
+export interface Meta {
+  dateModified?: any;
+  providedFrom?: any;
+  canEdit?: any;
+  status?: any;
+  statusSlug?: any;
+  campaignSetting?: any;
 }

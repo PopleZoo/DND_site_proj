@@ -1,8 +1,8 @@
 import { Character, Race, Class, Stats, HitPoints, Inventory, Spells } from '../../../types/character';
-import { mapStats } from './mappers/statsMapper';
-import { mapClasses } from './mappers/classMapper';
-import { mapInventory } from './mappers/inventoryMapper';
-import { mapSpells } from './mappers/spellMapper';
+import { mapStats } from '../mappers/statsMapper';
+import { mapClasses } from '../mappers/classMapper';
+import { mapInventory } from '../mappers/inventoryMapper';
+import { mapSpells } from '../mappers/spellMapper';
 
 export class DndBeyondImporter {
   static importCharacter(jsonData: string): Character {

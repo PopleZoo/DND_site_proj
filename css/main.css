@@ -1,14 +1,13 @@
 :root {
-    --color-purple-50: #faf5ff;
-    --color-purple-100: #f3e8ff;
-    --color-purple-600: #9333ea;
-    --color-purple-700: #7e22ce;
-    --color-purple-900: #581c87;
-    --color-gray-50: #f9fafb;
-    --color-gray-100: #f3f4f6;
-    --color-gray-600: #4b5563;
-    --color-gray-700: #374151;
-    --color-white: #ffffff;
+    --color-purple-50: #635985; /* Lightest purple */
+    --color-purple-100: #443C68; /* Medium purple */
+    --color-purple-600: #393053; /* Dark purple */
+    --color-purple-700: #18122B; /* Darkest purple */
+    --color-gray-50: #d1d5db; /* Light gray for text */
+    --color-gray-100: #e5e7eb; /* Lighter gray for accents */
+    --color-gray-600: #1f2937; /* Dark gray for muted text */
+    --color-gray-700: #111827; /* Darker gray for backgrounds */
+    --color-white: #e5e7eb; /* White for high contrast */
 }
 
 * {
@@ -20,8 +19,8 @@
 body {
     font-family: system-ui, -apple-system, sans-serif;
     line-height: 1.5;
-    background-color: var(--color-gray-50);
-    color: var(--color-gray-700);
+    background-color: var(--color-purple-700);
+    color: var(--color-gray-50);
 }
 
 .container {
@@ -37,13 +36,13 @@ body {
 
 .hero h1 {
     font-size: 2.25rem;
-    color: var(--color-purple-900);
+    color: var(--color-purple-50);
     margin-bottom: 1rem;
 }
 
 .hero p {
     font-size: 1.25rem;
-    color: var(--color-gray-600);
+    color: var(--color-gray-50);
     max-width: 42rem;
     margin: 0 auto;
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Book, Users, Scroll, DiceD20 } from 'lucide-react';
+import { Book, Users, Scroll } from 'lucide-react';
 import Card from '../components/ui/Card';
 
 export default function Home() {

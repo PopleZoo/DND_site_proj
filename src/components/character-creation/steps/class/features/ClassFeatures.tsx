@@ -1,7 +1,9 @@
-import React, { useMemo } from 'react';
-import { Class } from '../../../../../types/character';
+import React, { useMemo, useState } from 'react';
+import { Class, Subclass } from '../../../../../types/character';
 import { getFeaturesByLevel, getPreviousFeatures } from '../../../../../utils/classFeatures';
 import ClassFeatureList from './ClassFeatureList';
+import SubclassSelection from './SubclassSelection';
+import { useCharacterCreationStore } from '../../../../../store/characterCreationStore';
 
 interface ClassFeaturesProps {
   classData: Class;
@@ -9,6 +11,8 @@ interface ClassFeaturesProps {
 }
 
 export default function ClassFeatures({ classData, level }: ClassFeaturesProps) {
+  const setSelectedSubclass = useCharacterCreationStore(state => state.setSelectedSubclass);
+  const [selectedSubclass, setSelectedSubclassState] = useState<Subclass | null>(null);
   const currentLevelFeatures = useMemo(() => 
     getFeaturesByLevel(classData.id, level),
     [classData.id, level]
@@ -19,8 +23,19 @@ export default function ClassFeatures({ classData, level }: ClassFeaturesProps) 
     [classData.id, level]
   );
 
+  const handleSubclassSelect = (subclass: Subclass) => {
+    setSelectedSubclass(subclass.id);
+    setSelectedSubclassState(subclass);
+  };
+
   return (
     <div className="space-y-8">
+      {level >= 3 && classData.definition.subclasses && classData.definition.subclasses.length > 0 && (
+        <SubclassSelection 
+          subclasses={classData.definition.subclasses || []}
+          onSelect={handleSubclassSelect}
+        />
+      )}
       {currentLevelFeatures.length > 0 && (
         <ClassFeatureList 
           features={currentLevelFeatures} 
