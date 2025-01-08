@@ -1,54 +1,40 @@
-import React, { useState, useCallback } from 'react';
-import { useDropzone } from 'react-dropzone';
-import { FiFile } from 'react-icons/fi'; // Import the file icon
+import React from 'react';
 
 interface FileUploaderProps {
   onFileUpload: (data: any) => void;
 }
 
-const FileUploader: React.FC<FileUploaderProps> = ({ onFileUpload }) => {
-  const [loading, setLoading] = useState(false);
+const FileUploader = ({ onFileUpload }: FileUploaderProps) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
 
-  const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
-      const file = acceptedFiles[0]; // Get the first file
-      if (file) {
-        setLoading(true);
-        const reader = new FileReader();
-        reader.onload = () => {
-          try {
-            const jsonData = JSON.parse(reader.result as string);
-            onFileUpload(jsonData);
-          } catch (error) {
-            console.error('Error parsing JSON:', error);
-          } finally {
-            setLoading(false);
-          }
-        };
-        reader.readAsText(file);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const content = e.target?.result as string;
+        const data = JSON.parse(content);
+        onFileUpload(data);
+      } catch (error) {
+        console.error('Error parsing JSON file:', error);
+        onFileUpload({ error: 'Invalid JSON file' });
       }
-    },
-    [onFileUpload]
-  );
-
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop,
-    accept: {
-      'application/json': ['.json']
-    },
-    multiple: false
-  });
+    };
+    reader.readAsText(file);
+  };
 
   return (
-    <div
-      {...getRootProps()}
-      className="border-4 border-dashed border-gray-300 p-8 text-center cursor-pointer rounded-lg hover:border-blue-500"
-    >
-      <input {...getInputProps()} />
-      <FiFile className="mx-auto mb-4 text-gray-600 text-4xl" />
-      <p className="text-lg text-gray-500">
-        {loading ? 'Processing file...' : 'Drag & drop your JSON file here, or click to select a file.'}
-      </p>
+    <div>
+      <input
+        type="file"
+        accept=".json"
+        onChange={handleFileChange}
+        className="file:mr-4 file:py-2 file:px-4
+                 file:rounded-full file:border-0
+                 file:text-sm file:font-semibold
+                 file:bg-purple-50 file:text-purple-700
+                 hover:file:bg-purple-100"
+      />
     </div>
   );
 };

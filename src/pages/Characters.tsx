@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCharacterStore } from '../store/characterStore';
 import { Character } from '../types/character';
-import JSONCharacterImport from '../components/character-import/JSONCharacterImport';
 import CharacterCard from '../components/characters/CharacterCard';
 import CharacterSheet from '../components/characters/CharacterSheet';
 import Button from '../components/ui/Button';
 import Modal from '../components/ui/Modal';
 import { UserPlus, FileJson } from 'lucide-react';
+import JSONCharacterImport from '../components/character-import/JSONCharacterImport';
 
 export default function Characters() {
   const navigate = useNavigate();
@@ -30,9 +30,9 @@ export default function Characters() {
           Create Character
         </Button>
       </header>
-
-      {/* Import Section */}
-      <div className="grid md:grid-cols-2 gap-6">
+      
+        {/* Import Section */}
+        <div className="grid md:grid-cols-2 gap-6">
         <JSONCharacterImport />
         <div className="p-4 border-2 border-dashed border-purple-300 rounded-lg">
           <div className="text-center">
@@ -51,7 +51,6 @@ export default function Characters() {
           </div>
         </div>
       </div>
-
       {/* Character List */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {characters.map((character) => (
@@ -66,14 +65,10 @@ export default function Characters() {
       {/* Empty State */}
       {characters.length === 0 && (
         <div className="text-center py-12 bg-white rounded-lg shadow-sm">
-          <FileJson className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h2 className="text-xl font-semibold text-gray-600 mb-2">No Characters Yet</h2>
           <p className="text-gray-500 mb-6">
-            Create a new character or import an existing one to get started
+            Create a new character to get started
           </p>
-          <Button variant="primary" icon={UserPlus} onClick={handleCreateCharacter}>
-            Create Character
-          </Button>
         </div>
       )}
 

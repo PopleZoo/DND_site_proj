@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Character } from '../../types/character';
+import { Character, Stats } from '../../types/character';
+import { CharacterStorage } from '../../utils/characterStorage';
 import { Shield, Heart, Dumbbell, Book, Scroll, Wand2, X } from 'lucide-react';
 import AbilityScores from './sheet/AbilityScores';
 import SpellList from './sheet/SpellList';
@@ -25,15 +26,27 @@ export default function CharacterSheet({ character, onClose }: CharacterSheetPro
 
   // Safely gather all class features, ensuring we only access them if they exist
   const classFeatures = Array.isArray(character.classes)
-  ? character.classes.flatMap(cls => cls.features || [])
-  : [];  const inventory = character.inventory ?? [];
+  ? character.classes.flatMap(cls => cls.features || [])// incorreclty flagged as error
+  : []; 
+  const inventory = character.inventory ?? [];
   console.log('Class spells:', character);
 
   
-  const stats = character.stats ?? [];
+  const [stats, setStats] = useState(character.stats ?? []);
+
+  const handleSaveStats = (updatedStats: Stats[]) => {
+    setStats(updatedStats);
+    
+    // Create a deep copy of the character
+    const updatedCharacter = JSON.parse(JSON.stringify(character));
+    updatedCharacter.stats = updatedStats;
+    
+    // Save the updated character
+    CharacterStorage.saveCharacter(updatedCharacter);
+  };
 
   const tabs = [
-    { id: 'stats', name: 'Abilities', icon: Book, component: <AbilityScores stats={stats} /> },
+    { id: 'stats', name: 'Abilities', icon: Book, component: <AbilityScores stats={stats} onSave={handleSaveStats} /> },
     { id: 'features', name: 'Features', icon: Scroll, component: <FeatureList features={classFeatures} /> },
     { id: 'inventory', name: 'Inventory', icon: Shield, component: <InventoryList inventory={inventory} /> },
     { id: 'spells', name: 'Spells', icon: Wand2, component: <SpellList

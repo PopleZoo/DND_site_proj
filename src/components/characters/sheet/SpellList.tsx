@@ -12,7 +12,6 @@ export default function SpellList({
   raceSpells = [],
   itemSpells = [],
 }: SpellListProps) {
-  // Combine all spells into one array
   const allSpells = [...classSpells, ...raceSpells, ...itemSpells];
 
   if (!allSpells.length) {
@@ -23,7 +22,6 @@ export default function SpellList({
     );
   }
 
-  // Group spells by level
   const spellsByLevel = allSpells.reduce((acc, spell) => {
     const level = spell.level;
     if (!acc[level]) acc[level] = [];
@@ -43,7 +41,7 @@ export default function SpellList({
               <div key={spell.id} className="bg-white p-4 rounded-lg shadow">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h4 className="font-semibold">{spell.name}</h4>
+                    <h4 className="font-semibold text-gray-800">{spell.name}</h4>
                     <p className="text-sm text-purple-600">
                       {spell.school}
                       {spell.ritual && ' (Ritual)'}
@@ -52,7 +50,7 @@ export default function SpellList({
                   <div className="flex space-x-2">
                     {spell.alwaysPrepared && (
                       <span className="px-2 py-1 text-xs bg-blue-100 text-blue-600 rounded">
-                        Prepared
+                        Always Prepared
                       </span>
                     )}
                     {spell.concentration && (
@@ -62,11 +60,13 @@ export default function SpellList({
                     )}
                   </div>
                 </div>
+                <div className="mt-2 text-sm text-gray-700">
+                  <p><strong>Casting Time:</strong> {spell.castingTime || 'Unknown'}</p>
+                  <p><strong>Range:</strong> {spell.range?.origin || 'Unknown'} {spell.range?.value || ''}</p>
+                  <p><strong>Duration:</strong> {spell.duration?.value || 'Unknown'} {spell.duration?.unit || ''}</p>
+                </div>
                 <div className="mt-2 text-sm text-gray-600">
-                  <p><strong>Casting Time:</strong> {spell.castingTime}</p>
-                  <p><strong>Range:</strong> {spell.range?.origin} {spell.range?.value}</p>
-                  <p><strong>Duration:</strong> {spell.duration?.value} {spell.duration?.unit}</p>
-                  <p className="mt-2">{spell.description}</p>
+                  <p dangerouslySetInnerHTML={{ __html: spell.description || 'No description provided.' }}></p>
                 </div>
               </div>
             ))}

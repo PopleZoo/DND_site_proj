@@ -34,6 +34,7 @@ export interface Character {
   customItems?: any;
   campaign?: Campaign;
   creatures?: any;
+  inspiration?: boolean;
   optionalFeatures?: OptionalFeatures;
   meta?: Meta;
 }
@@ -202,6 +203,10 @@ export interface Background {
     name: string;
     description: string;
   };
+  flaws?: any;
+  ideals?: any;
+  traits?: any;
+  bonds?: any;
   isCustom: boolean;
 }
 
