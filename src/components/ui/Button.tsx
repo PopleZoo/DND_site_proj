@@ -14,11 +14,11 @@ export default function Button({
   className = '',
   ...props 
 }: ButtonProps) {
-  const baseStyles = 'flex items-center space-x-2 px-4 py-2 rounded-md transition-colors';
+  const baseStyles = 'flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-colors';
   const variants = {
-    primary: 'bg-purple-600 text-white hover:bg-purple-700',
-    secondary: 'bg-gray-100 text-gray-700 hover:bg-gray-200',
-    outline: 'border border-purple-600 text-purple-600 hover:bg-purple-50'
+    primary: 'bg-primary hover:bg-primary-dark text-dark',
+    secondary: 'bg-accent hover:bg-accent-dark text-light',
+    outline: 'border border-primary text-primary hover:bg-primary/10'
   };
 
   return (

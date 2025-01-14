@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Character, Stats } from '../../types/character';
-import { CharacterStorage } from '../../utils/characterStorage';
-import { Shield, Heart, Dumbbell, Book, Scroll, Wand2, X } from 'lucide-react';
+import { Character } from '../../types/character';
+import { useNavigate } from 'react-router-dom';
+import { Shield, Heart, Dumbbell, Book, Scroll, Wand2, X, Edit, Save } from 'lucide-react';
 import AbilityScores from './sheet/AbilityScores';
 import SpellList from './sheet/SpellList';
 import InventoryList from './sheet/InventoryList';
@@ -13,97 +13,82 @@ interface CharacterSheetProps {
 }
 
 export default function CharacterSheet({ character, onClose }: CharacterSheetProps) {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('stats');
-
-  const hitPoints = {
-    current: character.hitPoints?.current ?? 0,
-    max: character.hitPoints?.max ?? 0,
-    temp: character.hitPoints?.temp ?? 0
-  };
-
-  const displayInitiative = character.initiative ?? 0;
-  const displayArmorClass = character.armorClass ?? 10;
-
-  // Safely gather all class features, ensuring we only access them if they exist
+  const [isEditing, setIsEditing] = useState(false);
   const classFeatures = Array.isArray(character.classes)
-  ? character.classes.flatMap(cls => cls.features || [])// incorreclty flagged as error
-  : []; 
-  const inventory = character.inventory ?? [];
-  console.log('Class spells:', character);
+    ? character.classes.flatMap(cls => cls.features || [])
+    : []; 
 
-  
-  const [stats, setStats] = useState(character.stats ?? []);
-
-  const handleSaveStats = (updatedStats: Stats[]) => {
-    setStats(updatedStats);
-    
-    // Create a deep copy of the character
-    const updatedCharacter = JSON.parse(JSON.stringify(character));
-    updatedCharacter.stats = updatedStats;
-    
-    // Save the updated character
-    CharacterStorage.saveCharacter(updatedCharacter);
+  const handleEdit = () => {
+    if (isEditing) {
+      // Save changes
+      setIsEditing(false);
+    } else {
+      // Enter edit mode
+      setIsEditing(true);
+    }
   };
 
-  const tabs = [
-    { id: 'stats', name: 'Abilities', icon: Book, component: <AbilityScores stats={stats} onSave={handleSaveStats} /> },
-    { id: 'features', name: 'Features', icon: Scroll, component: <FeatureList features={classFeatures} /> },
-    { id: 'inventory', name: 'Inventory', icon: Shield, component: <InventoryList inventory={inventory} /> },
-    { id: 'spells', name: 'Spells', icon: Wand2, component: <SpellList
-      classSpells={character.spells.class}
-      raceSpells={character.spells.race}
-      itemSpells={character.spells.item}
-    />
-     }
-  ];
+  const handleEditInCreator = () => {
+    navigate('/create-character', { state: { editCharacter: character } });
+  };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col bg-dark">
       {/* Header */}
-      <div className="bg-purple-900 text-white p-6">
+      <div className="bg-dark-light border-b border-dark p-6">
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-3xl font-bold">{character.name}</h1>
-            <p className="text-purple-200">
+            <h1 className="text-3xl font-bold text-light">{character.name}</h1>
+            <p className="text-light-darker">
               Level {character.level} {character.race?.baseRaceName} {character.classes?.[0]?.name}
               {character.classes?.[0]?.subclass?.name && ` (${character.classes[0].subclass.name})`}
             </p>
           </div>
-          <button 
-            onClick={onClose}
-            className="p-2 hover:bg-purple-800 rounded-full transition-colors"
-          >
-            <X className="w-6 h-6" />
-          </button>
+          <div className="flex space-x-2">
+            <button 
+              onClick={handleEdit}
+              className="p-2 hover:bg-dark rounded-full transition-colors text-light hover:text-primary"
+            >
+              {isEditing ? <Save className="w-6 h-6" /> : <Edit className="w-6 h-6" />}
+            </button>
+            <button 
+              onClick={onClose}
+              className="p-2 hover:bg-dark rounded-full transition-colors text-light hover:text-primary"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
         </div>
 
         {/* Core Stats */}
         <div className="grid grid-cols-3 gap-6 mt-6">
           <div className="flex items-center space-x-3">
-            <Shield className="w-8 h-8 text-purple-300" />
+            <Shield className="w-8 h-8 text-primary" />
             <div>
-              <div className="text-purple-200 text-sm">Armor Class</div>
-              <div className="text-2xl font-bold">{displayArmorClass}</div>
+              <div className="text-light-darker text-sm">Armor Class</div>
+              <div className="text-2xl font-bold text-light">{character.armorClass}</div>
             </div>
           </div>
 
           <div className="flex items-center space-x-3">
-            <Heart className="w-8 h-8 text-red-400" />
+            <Heart className="w-8 h-8 text-accent" />
             <div>
-              <div className="text-purple-200 text-sm">Hit Points</div>
-              <div className="text-2xl font-bold">
-                {hitPoints.current}/{hitPoints.max}
-                {hitPoints.temp > 0 && <span className="text-sm ml-1">(+{hitPoints.temp})</span>}
+              <div className="text-light-darker text-sm">Hit Points</div>
+              <div className="text-2xl font-bold text-light">
+                {character.hitPoints.current}/{character.hitPoints.max}
+                {character.hitPoints.temp > 0 && <span className="text-sm ml-1">(+{character.hitPoints.temp})</span>}
               </div>
             </div>
           </div>
 
           <div className="flex items-center space-x-3">
-            <Dumbbell className="w-8 h-8 text-purple-300" />
+            <Dumbbell className="w-8 h-8 text-primary" />
             <div>
-              <div className="text-purple-200 text-sm">Initiative</div>
-              <div className="text-2xl font-bold">
-                {displayInitiative >= 0 ? `+${displayInitiative}` : displayInitiative}
+              <div className="text-light-darker text-sm">Initiative</div>
+              <div className="text-2xl font-bold text-light">
+                {character.initiative >= 0 ? `+${character.initiative}` : character.initiative}
               </div>
             </div>
           </div>
@@ -111,17 +96,24 @@ export default function CharacterSheet({ character, onClose }: CharacterSheetPro
       </div>
 
       {/* Navigation */}
-      <div className="bg-white border-b">
+      <div className="bg-dark-light border-b border-dark">
         <div className="flex space-x-1">
-          {tabs.map(tab => {
+          {[
+            { id: 'stats', name: 'Abilities', icon: Book },
+            { id: 'features', name: 'Features', icon: Scroll },
+            { id: 'inventory', name: 'Inventory', icon: Shield },
+            { id: 'spells', name: 'Spells', icon: Wand2 }
+          ].map(tab => {
             const Icon = tab.icon;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-6 py-3 flex items-center space-x-2 transition-colors ${activeTab === tab.id
-                  ? 'text-purple-600 border-b-2 border-purple-600'
-                  : 'text-gray-600 hover:text-purple-600'}`}
+                className={`px-6 py-3 flex items-center space-x-2 transition-colors ${
+                  activeTab === tab.id
+                    ? 'text-primary border-b-2 border-primary'
+                    : 'text-light-darker hover:text-primary'
+                }`}
               >
                 <Icon className="w-5 h-5" />
                 <span>{tab.name}</span>
@@ -132,9 +124,37 @@ export default function CharacterSheet({ character, onClose }: CharacterSheetPro
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
-        {tabs.find(tab => tab.id === activeTab)?.component}
+      <div className="flex-1 overflow-y-auto p-6 bg-dark">
+        {activeTab === 'stats' && (
+          <AbilityScores stats={character.stats} isEditing={isEditing} />
+        )}
+        {activeTab === 'features' && (
+          <FeatureList features={classFeatures} isEditing={isEditing} />
+        )}
+        {activeTab === 'inventory' && (
+          <InventoryList inventory={character.inventory} isEditing={isEditing} />
+        )}
+        {activeTab === 'spells' && (
+          <SpellList
+            classSpells={character.spells.class}
+            raceSpells={character.spells.race}
+            itemSpells={character.spells.item}
+            isEditing={isEditing}
+          />
+        )}
       </div>
+
+      {/* Edit in Creator Button */}
+      {isEditing && (
+        <div className="p-4 bg-dark-light border-t border-dark">
+          <button
+            onClick={handleEditInCreator}
+            className="w-full bg-primary hover:bg-primary-dark text-dark font-medium py-2 px-4 rounded-md transition-colors"
+          >
+            Edit in Character Creator
+          </button>
+        </div>
+      )}
     </div>
   );
 }

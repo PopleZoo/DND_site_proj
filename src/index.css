@@ -1,3 +1,136 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-dark text-light;
+}
+
+.navbar {
+  @apply bg-dark border-b border-dark-light;
+}
+
+.card {
+  @apply bg-dark-light border border-dark text-light rounded-lg shadow-lg;
+}
+
+.button {
+  @apply px-4 py-2 rounded-lg font-medium transition-colors;
+}
+
+.button.primary {
+  @apply bg-primary hover:bg-primary-dark text-dark;
+}
+
+.button.secondary {
+  @apply bg-accent hover:bg-accent-dark text-light;
+}
+
+.button.outline {
+  @apply border border-primary text-primary hover:bg-primary/10;
+}
+
+.input {
+  @apply bg-dark-light border border-dark rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent text-light;
+}
+
+.select {
+  @apply bg-dark-light border border-dark rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent text-light;
+}
+
+.modal {
+  @apply bg-dark border border-dark-light rounded-lg shadow-lg;
+}
+
+.tab {
+  @apply px-4 py-2 font-medium transition-colors;
+}
+
+.tab.active {
+  @apply text-primary border-b-2 border-primary;
+}
+
+.tab:not(.active) {
+  @apply text-light hover:text-primary;
+}
+
+.card-header {
+  @apply bg-dark-light border-b border-dark p-4 rounded-t-lg;
+}
+
+.card-body {
+  @apply p-4;
+}
+
+.card-footer {
+  @apply bg-dark-light border-t border-dark p-4 rounded-b-lg;
+}
+
+.form-label {
+  @apply block text-sm font-medium text-light mb-1;
+}
+
+.form-hint {
+  @apply text-sm text-light-darker mt-1;
+}
+
+.form-error {
+  @apply text-sm text-accent mt-1;
+}
+
+.divider {
+  @apply border-t border-dark-light my-4;
+}
+
+.badge {
+  @apply px-2 py-1 text-xs font-medium rounded-full;
+}
+
+.badge.primary {
+  @apply bg-primary text-dark;
+}
+
+.badge.secondary {
+  @apply bg-accent text-light;
+}
+
+.tooltip {
+  @apply bg-dark-light text-light px-2 py-1 text-sm rounded shadow-lg border border-dark;
+}
+
+/* Character Sheet Specific Styles */
+.character-sheet {
+  @apply bg-dark text-light;
+}
+
+.character-sheet-header {
+  @apply bg-dark-light border-b border-dark p-6;
+}
+
+.character-sheet-nav {
+  @apply bg-dark-light border-b border-dark;
+}
+
+.character-sheet-content {
+  @apply bg-dark p-6;
+}
+
+.stat-card {
+  @apply bg-dark-light p-4 rounded-lg border border-dark;
+}
+
+.feature-card {
+  @apply bg-dark-light p-4 rounded-lg border border-dark mb-4;
+}
+
+.spell-card {
+  @apply bg-dark-light p-4 rounded-lg border border-dark mb-4;
+}
+
+.inventory-item {
+  @apply bg-dark-light p-4 rounded-lg border border-dark mb-4;
+}

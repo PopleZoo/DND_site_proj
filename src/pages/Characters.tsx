@@ -25,25 +25,25 @@ export default function Characters() {
   return (
     <div className="space-y-6">
       <header className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-purple-900">Characters</h1>
+        <h1 className="text-3xl font-bold text-primary">Characters</h1>
         <Button icon={UserPlus} onClick={handleCreateCharacter}>
           Create Character
         </Button>
       </header>
       
-        {/* Import Section */}
-        <div className="grid md:grid-cols-2 gap-6">
+      {/* Import Section */}
+      <div className="grid md:grid-cols-2 gap-6">
         <JSONCharacterImport />
-        <div className="p-4 border-2 border-dashed border-purple-300 rounded-lg">
+        <div className="p-4 border-2 border-dashed border-primary/30 rounded-lg">
           <div className="text-center">
-            <FileJson className="h-12 w-12 text-purple-600 mx-auto mb-2" />
-            <h3 className="text-lg font-semibold mb-1">Need help?</h3>
-            <p className="text-sm text-gray-600 mb-4">
+            <FileJson className="h-12 w-12 text-primary mx-auto mb-2" />
+            <h3 className="text-lg font-semibold mb-1 text-light">Need help?</h3>
+            <p className="text-sm text-light-darker mb-4">
               <a 
                 href="https://www.cbr.com/dnd-beyond-alternatives-import-guide/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-purple-600 hover:text-purple-700"
+                className="text-primary hover:text-primary-dark"
               >
                 Follow this guide
               </a>
@@ -51,6 +51,7 @@ export default function Characters() {
           </div>
         </div>
       </div>
+
       {/* Character List */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {characters.map((character) => (
@@ -64,9 +65,9 @@ export default function Characters() {
 
       {/* Empty State */}
       {characters.length === 0 && (
-        <div className="text-center py-12 bg-white rounded-lg shadow-sm">
-          <h2 className="text-xl font-semibold text-gray-600 mb-2">No Characters Yet</h2>
-          <p className="text-gray-500 mb-6">
+        <div className="text-center py-12 bg-dark-light rounded-lg">
+          <h2 className="text-xl font-semibold text-light mb-2">No Characters Yet</h2>
+          <p className="text-light-darker mb-6">
             Create a new character to get started
           </p>
         </div>

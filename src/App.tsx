@@ -6,11 +6,12 @@ import Characters from './pages/Characters';
 import Homebrew from './pages/Homebrew';
 import Campaigns from './pages/Campaigns';
 import CharacterCreationWizard from './components/character-creation/CharacterCreationWizard';
+import AuthCallback from './components/auth/AuthCallback';
 
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-[#313638]"> {/* Updated to use dark background */}
         <Navbar />
         <main className="max-w-7xl mx-auto px-4 py-6">
           <Routes>
@@ -19,6 +20,7 @@ function App() {
             <Route path="/create-character" element={<CharacterCreationWizard />} />
             <Route path="/homebrew" element={<Homebrew />} />
             <Route path="/campaigns" element={<Campaigns />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
           </Routes>
         </main>
       </div>

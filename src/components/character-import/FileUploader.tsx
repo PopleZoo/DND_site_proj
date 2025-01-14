@@ -32,8 +32,11 @@ const FileUploader = ({ onFileUpload }: FileUploaderProps) => {
         className="file:mr-4 file:py-2 file:px-4
                  file:rounded-full file:border-0
                  file:text-sm file:font-semibold
-                 file:bg-purple-50 file:text-purple-700
-                 hover:file:bg-purple-100"
+                 file:bg-primary file:text-dark
+                 hover:file:bg-primary-dark
+                 text-light cursor-pointer
+                 border border-dark-light rounded-lg
+                 px-4 py-2 w-full"
       />
     </div>
   );

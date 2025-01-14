@@ -1,41 +1,102 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Dice6, Book, Users, Scroll, Menu } from 'lucide-react';
+import { Book, Users, Scroll, User } from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDiceD20 } from '@fortawesome/free-solid-svg-icons';
+import { useAuthStore } from '../store/authStore';
+import AuthModal from './auth/AuthModal';
 
 export default function Navbar() {
+  const { user, username, signOut } = useAuthStore();
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+
   return (
-    <nav className="bg-purple-900 text-white shadow-lg">
+    <nav className="bg-dark border-b border-dark-light">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2">
-              <Dice6 className="h-8 w-8" />
-              <span className="font-bold text-xl">D&D Homebrew Hub</span>
+              <FontAwesomeIcon icon={faDiceD20} className="h-8 w-8 text-primary" />
+              <span className="font-bold text-xl text-light">Nat20</span>
             </Link>
           </div>
           
           <div className="hidden md:flex items-center space-x-8">
-            <Link to="/characters" className="flex items-center space-x-1 hover:text-purple-200">
+            <Link to="/characters" className="flex items-center space-x-1 text-light hover:text-primary transition-colors">
               <Users className="h-5 w-5" />
               <span>Characters</span>
             </Link>
-            <Link to="/homebrew" className="flex items-center space-x-1 hover:text-purple-200">
+            <Link to="/homebrew" className="flex items-center space-x-1 text-light hover:text-primary transition-colors">
               <Book className="h-5 w-5" />
               <span>Homebrew</span>
             </Link>
-            <Link to="/campaigns" className="flex items-center space-x-1 hover:text-purple-200">
+            <Link to="/campaigns" className="flex items-center space-x-1 text-light hover:text-primary transition-colors">
               <Scroll className="h-5 w-5" />
               <span>Campaigns</span>
             </Link>
-          </div>
-          
-          <div className="md:hidden flex items-center">
-            <button className="p-2">
-              <Menu className="h-6 w-6" />
-            </button>
+
+            <div className="relative">
+              {user ? (
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex items-center space-x-2 text-light hover:text-primary transition-colors"
+                >
+                  <User className="h-5 w-5" />
+                  <span>{username || 'User'}</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => setShowAuthModal(true)}
+                  className="flex items-center space-x-2 text-light hover:text-primary transition-colors"
+                >
+                  <User className="h-5 w-5" />
+                  <span>Sign In</span>
+                </button>
+              )}
+
+              {showUserMenu && (
+                <div className="absolute right-0 mt-2 w-48 bg-dark-light rounded-lg shadow-lg py-2 z-50">
+                  <Link
+                    to="/characters"
+                    className="block px-4 py-2 text-light hover:bg-dark hover:text-primary"
+                    onClick={() => setShowUserMenu(false)}
+                  >
+                    My Characters
+                  </Link>
+                  <Link
+                    to="/homebrew"
+                    className="block px-4 py-2 text-light hover:bg-dark hover:text-primary"
+                    onClick={() => setShowUserMenu(false)}
+                  >
+                    My Homebrew
+                  </Link>
+                  <Link
+                    to="/campaigns"
+                    className="block px-4 py-2 text-light hover:bg-dark hover:text-primary"
+                    onClick={() => setShowUserMenu(false)}
+                  >
+                    My Campaigns
+                  </Link>
+                  <button
+                    onClick={() => {
+                      signOut();
+                      setShowUserMenu(false);
+                    }}
+                    className="block w-full text-left px-4 py-2 text-light hover:bg-dark hover:text-primary"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
+
+      {showAuthModal && (
+        <AuthModal onClose={() => setShowAuthModal(false)} />
+      )}
     </nav>
   );
 }

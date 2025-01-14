@@ -1,3 +1,11 @@
+:root {
+    --color-primary: #F09D51; /* Orange */
+    --color-accent: #F06543; /* Coral Red */
+    --color-dark: #313638; /* Dark Gray */
+    --color-light: #E0DFD5; /* Light Gray */
+    --color-light-lighter: #E8E9EB; /* Off White */
+}
+
 .grid-2 {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -13,20 +21,39 @@
 .icon {
     width: 24px;
     height: 24px;
+    color: var(--color-primary); /* Updated for palette consistency */
 }
 
 .icon-sm {
     width: 20px;
     height: 20px;
+    color: var(--color-light); /* Light gray for subtle icons */
 }
 
 .icon-lg {
     width: 48px;
     height: 48px;
+    color: var(--color-accent); /* Coral Red for emphasis */
 }
 
-.purple {
-    color: var(--color-purple-600);
+.primary {
+    color: var(--color-primary);
+}
+
+.accent {
+    color: var(--color-accent);
+}
+
+.dark {
+    color: var(--color-dark);
+}
+
+.light {
+    color: var(--color-light);
+}
+
+.light-lighter {
+    color: var(--color-light-lighter);
 }
 
 @media (max-width: 768px) {
