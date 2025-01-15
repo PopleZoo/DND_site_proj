@@ -1,79 +1,118 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCharacterCreationStore } from '../../../../store/characterCreationStore';
-import { spellLists } from '../../../../data/spells/spellLists';
-import SpellLevelSelector from './SpellLevelSelector';
-import SpellList from './SpellList';
-import { Book, Search } from 'lucide-react';
+import { Search, Book } from 'lucide-react';
+import SpellCard from './SpellCard';
+import Papa from 'papaparse';
 
-interface SpellSelectionProps {
-  className: string;
+interface Spell {
+  'Spell Name': string;
+  Level: string;
+  School: string;
+  'Casting Time': string;
+  Range: string;
+  Components: string;
+  Classes: string;
 }
 
-export default function SpellSelection({ className }: SpellSelectionProps) {
-  const [selectedLevel, setSelectedLevel] = useState(0);
+export default function SpellSelection({ className }: { className: string }) {
+  const [spells, setSpells] = useState<Spell[]>([]);
+  const [selectedLevel, setSelectedLevel] = useState<string>('0');
   const [searchTerm, setSearchTerm] = useState('');
   const { selectedSpells, setSelectedSpells } = useCharacterCreationStore();
+  const [isLoading, setIsLoading] = useState(true);
 
-  const spellList = spellLists[className];
-  if (!spellList) return null;
+  useEffect(() => {
+    fetch('/spellList.csv')
+      .then(response => response.text())
+      .then(csv => {
+        const { data } = Papa.parse(csv, { header: true });
+        setSpells(data as Spell[]);
+        setIsLoading(false);
+      })
+      .catch(error => {
+        console.error('Error loading spells:', error);
+        setIsLoading(false);
+      });
+  }, []);
 
-  const availableLevels = [0, ...Object.keys(spellList.spells).map(Number)];
-  
-  const getSpellsForLevel = (level: number) => {
-    if (level === 0) return spellList.cantrips;
-    return spellList.spells[level] || [];
-  };
+  const filteredSpells = spells.filter(spell => {
+    if (!spell.Classes || !spell['Spell Name'] || !spell.School) return false;
+    
+    const matchesClass = spell.Classes.toLowerCase().includes(className.toLowerCase());
+    const matchesLevel = spell.Level === selectedLevel;
+    const matchesSearch = spell['Spell Name'].toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         spell.School.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesClass && matchesLevel && matchesSearch;
+  });
 
-  const currentLevelSpells = getSpellsForLevel(selectedLevel).filter(spell =>
-    spell.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    spell.school.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const handleSpellSelect = (spellId: string) => {
+  const handleSpellSelect = (spellName: string) => {
     setSelectedSpells(prev => {
-      if (prev.includes(spellId)) {
-        return prev.filter(id => id !== spellId);
+      if (prev.includes(spellName)) {
+        return prev.filter(name => name !== spellName);
       }
-      return [...prev, spellId];
+      return [...prev, spellName];
     });
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-48">
+        <p className="text-[#E0DFD5]">Loading spells...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Book className="w-5 h-5 text-purple-600" />
-          <div>
-            <h2 className="text-lg font-semibold">Spells</h2>
-            <p className="text-sm text-gray-600">
-              Spellcasting Ability: {spellList.spellcastingAbility}
-            </p>
-          </div>
+          <Book className="w-5 h-5 text-[#F09D51]" />
+          <h2 className="text-lg font-semibold text-[#E0DFD5]">Available Spells</h2>
         </div>
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#E0DFD5]" />
           <input
             type="text"
             placeholder="Search spells..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9 pr-4 py-2 border rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            className="pl-9 pr-4 py-2 bg-[#4a4f52] border border-[#313638] rounded-md text-[#E0DFD5] focus:ring-2 focus:ring-[#F09D51] focus:border-transparent"
           />
         </div>
       </div>
 
-      <SpellLevelSelector
-        availableLevels={availableLevels}
-        selectedLevel={selectedLevel}
-        onLevelSelect={setSelectedLevel}
-      />
+      <div className="flex space-x-2 overflow-x-auto">
+        {['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].map((level) => (
+          <button
+            key={level}
+            onClick={() => setSelectedLevel(level)}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              selectedLevel === level
+                ? 'bg-[#F09D51] text-[#313638]'
+                : 'bg-[#4a4f52] text-[#E0DFD5] hover:bg-[#313638]'
+            }`}
+          >
+            {level === '0' ? 'Cantrips' : `Level ${level}`}
+          </button>
+        ))}
+      </div>
 
-      <SpellList
-        spells={currentLevelSpells}
-        selectedSpells={selectedSpells}
-        onSpellSelect={handleSpellSelect}
-        maxSelections={selectedLevel === 0 ? 3 : undefined}
-      />
+      {filteredSpells.length > 0 ? (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredSpells.map((spell) => (
+            <SpellCard
+              key={spell['Spell Name']}
+              spell={spell}
+              selected={selectedSpells.includes(spell['Spell Name'])}
+              onSelect={() => handleSpellSelect(spell['Spell Name'])}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-8 text-[#E0DFD5]/70">
+          No spells found for the selected criteria
+        </div>
+      )}
     </div>
   );
 }

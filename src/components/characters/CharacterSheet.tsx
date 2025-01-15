@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Character } from '../../types/character';
+import { Character, Inventory } from '../../types/character';
 import { useNavigate } from 'react-router-dom';
 import { Shield, Heart, Dumbbell, Book, Scroll, Wand2, X, Edit, Save } from 'lucide-react';
 import AbilityScores from './sheet/AbilityScores';
@@ -10,24 +10,49 @@ import FeatureList from './sheet/FeatureList';
 interface CharacterSheetProps {
   character: Character;
   onClose: () => void;
+  onUpdate?: (character: Character) => void;
 }
 
-export default function CharacterSheet({ character, onClose }: CharacterSheetProps) {
+export default function CharacterSheet({ character, onClose, onUpdate }: CharacterSheetProps) {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('stats');
   const [isEditing, setIsEditing] = useState(false);
   const classFeatures = Array.isArray(character.classes)
     ? character.classes.flatMap(cls => cls.features || [])
-    : []; 
+    : [];
 
   const handleEdit = () => {
     if (isEditing) {
       // Save changes
+      if (onUpdate) {
+        onUpdate(character);
+      }
       setIsEditing(false);
     } else {
-      // Enter edit mode
       setIsEditing(true);
     }
+  };
+
+  const handleUpdateInventory = (updatedItem: Inventory) => {
+    if (!onUpdate) return;
+
+    const updatedInventory = character.inventory.map(item => 
+      item.id === updatedItem.id ? updatedItem : item
+    );
+
+    onUpdate({
+      ...character,
+      inventory: updatedInventory
+    });
+  };
+
+  const handleAddInventoryItem = (newItem: Inventory) => {
+    if (!onUpdate) return;
+
+    onUpdate({
+      ...character,
+      inventory: [...character.inventory, newItem]
+    });
   };
 
   const handleEditInCreator = () => {
@@ -132,7 +157,12 @@ export default function CharacterSheet({ character, onClose }: CharacterSheetPro
           <FeatureList features={classFeatures} isEditing={isEditing} />
         )}
         {activeTab === 'inventory' && (
-          <InventoryList inventory={character.inventory} isEditing={isEditing} />
+          <InventoryList 
+            inventory={character.inventory} 
+            isEditing={isEditing}
+            onAddItem={handleAddInventoryItem}
+            onUpdateItem={handleUpdateInventory}
+          />
         )}
         {activeTab === 'spells' && (
           <SpellList

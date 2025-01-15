@@ -317,8 +317,8 @@ export const species: Species[] = [
                 description: 'You have resistance to fire damage.'
               }
             ]
-          }
-                    {
+          },
+          {
             id: 'silver-dragonborn',
             name: 'Silver Dragonborn',
             description: 'Descendants of silver dragons, attuned to the frigid cold.',

@@ -1,17 +1,48 @@
 import React, { useState } from 'react';
 import { Inventory } from '../../../types/character';
-import { Plus, Search, Tag, DollarSign } from 'lucide-react';
+import { Plus, Search, Tag, DollarSign, Shield, Sparkles } from 'lucide-react';
 import ItemSearch from './inventory/ItemSearch';
 import AddCustomItem from './inventory/AddCustomItem';
 
 interface InventoryListProps {
   inventory: Inventory[];
   isEditing?: boolean;
+  onAddItem?: (item: Inventory) => void;
+  onUpdateItem?: (item: Inventory) => void;
 }
 
-export default function InventoryList({ inventory = [], isEditing = false }: InventoryListProps) {
+export default function InventoryList({ 
+  inventory = [], 
+  isEditing = false, 
+  onAddItem,
+  onUpdateItem 
+}: InventoryListProps) {
   const [showItemSearch, setShowItemSearch] = useState(false);
   const [showCustomItemForm, setShowCustomItemForm] = useState(false);
+
+  const handleAddItem = (item: Inventory) => {
+    if (onAddItem) {
+      onAddItem(item);
+    }
+  };
+
+  const handleToggleEquipped = (item: Inventory) => {
+    if (onUpdateItem) {
+      onUpdateItem({
+        ...item,
+        equipped: !item.equipped
+      });
+    }
+  };
+
+  const handleToggleAttuned = (item: Inventory) => {
+    if (onUpdateItem && item.definition?.requiresAttunement) {
+      onUpdateItem({
+        ...item,
+        isAttuned: !item.isAttuned
+      });
+    }
+  };
 
   if (!inventory.length && !isEditing) {
     return (
@@ -41,20 +72,51 @@ export default function InventoryList({ inventory = [], isEditing = false }: Inv
           </div>
         </div>
         <div className="flex space-x-2">
-          {item.equipped && (
-            <span className="px-2 py-1 text-xs bg-primary/20 text-primary rounded">
-              Equipped
-            </span>
-          )}
-          {item.isHomebrew && (
-            <span className="px-2 py-1 text-xs bg-accent/20 text-accent rounded">
-              Homebrew
-            </span>
-          )}
-          {item.isAttuned && (
-            <span className="px-2 py-1 text-xs bg-primary/20 text-primary rounded">
-              Attuned
-            </span>
+          {isEditing ? (
+            <div className="flex space-x-2">
+              <button
+                onClick={() => handleToggleEquipped(item)}
+                className={`px-2 py-1 rounded flex items-center space-x-1 ${
+                  item.equipped 
+                    ? 'bg-primary/20 text-primary' 
+                    : 'bg-dark text-light-darker hover:text-primary'
+                }`}
+              >
+                <Shield className="w-4 h-4" />
+                <span className="text-xs">Equipped</span>
+              </button>
+              {item.definition?.requiresAttunement && (
+                <button
+                  onClick={() => handleToggleAttuned(item)}
+                  className={`px-2 py-1 rounded flex items-center space-x-1 ${
+                    item.isAttuned 
+                      ? 'bg-accent/20 text-accent' 
+                      : 'bg-dark text-light-darker hover:text-accent'
+                  }`}
+                >
+                  <Sparkles className="w-4 h-4" />
+                  <span className="text-xs">Attuned</span>
+                </button>
+              )}
+            </div>
+          ) : (
+            <>
+              {item.equipped && (
+                <span className="px-2 py-1 text-xs bg-primary/20 text-primary rounded">
+                  Equipped
+                </span>
+              )}
+              {item.isHomebrew && (
+                <span className="px-2 py-1 text-xs bg-accent/20 text-accent rounded">
+                  Homebrew
+                </span>
+              )}
+              {item.isAttuned && (
+                <span className="px-2 py-1 text-xs bg-primary/20 text-primary rounded">
+                  Attuned
+                </span>
+              )}
+            </>
           )}
         </div>
       </div>
@@ -124,7 +186,10 @@ export default function InventoryList({ inventory = [], isEditing = false }: Inv
       )}
 
       {showItemSearch && (
-        <ItemSearch onClose={() => setShowItemSearch(false)} />
+        <ItemSearch 
+          onClose={() => setShowItemSearch(false)} 
+          onAddItem={handleAddItem}
+        />
       )}
 
       {showCustomItemForm && (

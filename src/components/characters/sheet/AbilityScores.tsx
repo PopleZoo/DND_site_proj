@@ -15,6 +15,11 @@ export default function AbilityScores({ stats = [], isEditing = false }: Ability
     );
   }
 
+  const handleScoreChange = (statId: number, value: string) => {
+    // This will be implemented when we add the update functionality
+    console.log('Score changed:', statId, value);
+  };
+
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
       {stats.map((stat) => (
@@ -25,6 +30,7 @@ export default function AbilityScores({ stats = [], isEditing = false }: Ability
             <input
               type="number"
               value={stat.value}
+              onChange={(e) => handleScoreChange(stat.id, e.target.value)}
               className="w-full text-center text-2xl font-bold bg-dark text-light border border-dark rounded px-2 py-1 mt-2"
               min="1"
               max="30"

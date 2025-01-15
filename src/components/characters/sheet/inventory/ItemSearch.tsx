@@ -3,6 +3,7 @@ import { Search, X, Filter } from 'lucide-react';
 
 interface ItemSearchProps {
   onClose: () => void;
+  onAddItem?: (item: any) => void;
 }
 
 interface Item {
@@ -14,7 +15,7 @@ interface Item {
   Source: string;
 }
 
-export default function ItemSearch({ onClose }: ItemSearchProps) {
+export default function ItemSearch({ onClose, onAddItem }: ItemSearchProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [items, setItems] = useState<Item[]>([]);
@@ -59,6 +60,31 @@ export default function ItemSearch({ onClose }: ItemSearchProps) {
 
     setFilteredItems(filtered);
   }, [searchTerm, selectedCategory, items]);
+
+  const handleAddItem = (item: Item) => {
+    if (onAddItem) {
+      const inventoryItem = {
+        id: crypto.randomUUID(),
+        name: item.Item,
+        type: item.Category,
+        equipped: false,
+        quantity: 1,
+        weight: parseFloat(item.Weight) || 0,
+        definition: {
+          description: `${item.Category} - ${item['Sub-Category']}`,
+          cost: parseFloat(item.Cost) || 0,
+          properties: [],
+          rarity: 'Common',
+          magic: false,
+          requiresAttunement: false
+        },
+        isAttuned: false,
+        isHomebrew: false
+      };
+      onAddItem(inventoryItem);
+    }
+    onClose();
+  };
 
   const categories = Array.from(new Set(items.map(item => item.Category)));
 
@@ -127,9 +153,10 @@ export default function ItemSearch({ onClose }: ItemSearchProps) {
         <div className="overflow-y-auto max-h-[calc(80vh-200px)] p-4">
           <div className="grid gap-4">
             {filteredItems.map((item, index) => (
-              <div
+              <button
                 key={index}
-                className="bg-dark p-4 rounded-lg hover:bg-dark/80 cursor-pointer transition-colors"
+                onClick={() => handleAddItem(item)}
+                className="bg-dark p-4 rounded-lg hover:bg-dark/80 cursor-pointer transition-colors text-left"
               >
                 <div className="flex justify-between items-start">
                   <div>
@@ -141,7 +168,7 @@ export default function ItemSearch({ onClose }: ItemSearchProps) {
                     <p className="text-sm text-light-darker">Weight: {item.Weight}</p>
                   </div>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>
