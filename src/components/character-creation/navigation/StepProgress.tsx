@@ -8,9 +8,9 @@ export default function StepProgress() {
 
   return (
     <div className="relative">
-      <div className="absolute top-5 w-full h-0.5 bg-gray-200" />
+      <div className="absolute top-5 w-full h-0.5 bg-[#E8E9EB]" />
       <div
-        className="absolute top-5 h-0.5 bg-purple-600 transition-all"
+        className="absolute top-5 h-0.5 bg-[#F09D51] transition-all"
         style={{ width: `${(Math.max(0, currentStep - 1) / (CREATION_STEPS.length - 1)) * 100}%` }}
       />
       <div className="relative flex justify-between">
@@ -19,19 +19,19 @@ export default function StepProgress() {
             key={step.id}
             className={`flex flex-col items-center ${
               step.id === currentStep
-                ? 'text-purple-600'
+                ? 'text-[#F09D51]'
                 : completedSteps.includes(step.id)
-                ? 'text-green-600'
-                : 'text-gray-400'
+                ? 'text-[#F06543]'
+                : 'text-[#E0DFD5]'
             }`}
           >
             <div
               className={`w-10 h-10 flex items-center justify-center rounded-full ${
                 step.id === currentStep
-                  ? 'bg-purple-600 text-white'
+                  ? 'bg-[#F09D51] text-white'
                   : completedSteps.includes(step.id)
-                  ? 'bg-green-600 text-white'
-                  : 'bg-gray-200'
+                  ? 'bg-[#F06543] text-white'
+                  : 'bg-[#4a4f52]'
               }`}
             >
               {completedSteps.includes(step.id) ? (

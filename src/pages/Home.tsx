@@ -1,6 +1,8 @@
 import React from 'react';
+import { Beer } from 'lucide-react'; // Importing homebrew icon
+import { Swords } from 'lucide-react'; // Importing charater management icon
+import { GiBookmark  } from "react-icons/gi";//Importing campaign icon
 import { Link } from 'react-router-dom';
-import { Book, Users, Scroll } from 'lucide-react';
 import Card from '../components/ui/Card';
 
 export default function Home() {
@@ -18,7 +20,7 @@ export default function Home() {
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card>
-          <Users className="h-12 w-12 text-[#F09D51] mb-4" />
+          <Swords className="h-12 w-12 text-[#F09D51] mb-4" />
           <h2 className="text-xl font-semibold mb-2 text-[#E8E9EB]">Character Management</h2>
           <p className="text-[#E0DFD5] mb-4">
             Create, import, and manage your D&D characters with our intuitive tools.
@@ -32,8 +34,8 @@ export default function Home() {
         </Card>
 
         <Card>
-          <Book className="h-12 w-12 text-[#F09D51] mb-4" />
-          <h2 className="text-xl font-semibold mb-2 text-[#E8E9EB]">Homebrew Content</h2>
+        <Beer className="h-12 w-12 text-[#F09D51] mb-4" />
+        <h2 className="text-xl font-semibold mb-2 text-[#E8E9EB]">Homebrew Content</h2>
           <p className="text-[#E0DFD5] mb-4">
             Explore and create custom classes, races, items, and more.
           </p>
@@ -46,7 +48,7 @@ export default function Home() {
         </Card>
 
         <Card>
-          <Scroll className="h-12 w-12 text-[#F09D51] mb-4" />
+          <GiBookmark   className="h-12 w-12 text-[#F09D51] mb-4" />
           <h2 className="text-xl font-semibold mb-2 text-[#E8E9EB]">Campaign Tools</h2>
           <p className="text-[#E0DFD5] mb-4">
             Organize your campaigns and keep track of your adventures.

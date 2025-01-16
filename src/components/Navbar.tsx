@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Book, Users, Scroll, User } from 'lucide-react';
+import { Beer, Swords } from 'lucide-react'; // Importing new icons
+import { GiBookmark, GiSwordman } from 'react-icons/gi'; // Campaign and user icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDiceD20 } from '@fortawesome/free-solid-svg-icons';
 import { useAuthStore } from '../store/authStore';
@@ -21,18 +22,27 @@ export default function Navbar() {
               <span className="font-bold text-xl text-light">Nat20</span>
             </Link>
           </div>
-          
+
           <div className="hidden md:flex items-center space-x-8">
-            <Link to="/characters" className="flex items-center space-x-1 text-light hover:text-primary transition-colors">
-              <Users className="h-5 w-5" />
+            <Link
+              to="/characters"
+              className="flex items-center space-x-1 text-light hover:text-primary transition-colors"
+            >
+              <Swords className="h-5 w-5" />
               <span>Characters</span>
             </Link>
-            <Link to="/homebrew" className="flex items-center space-x-1 text-light hover:text-primary transition-colors">
-              <Book className="h-5 w-5" />
+            <Link
+              to="/homebrew"
+              className="flex items-center space-x-1 text-light hover:text-primary transition-colors"
+            >
+              <Beer className="h-5 w-5" />
               <span>Homebrew</span>
             </Link>
-            <Link to="/campaigns" className="flex items-center space-x-1 text-light hover:text-primary transition-colors">
-              <Scroll className="h-5 w-5" />
+            <Link
+              to="/campaigns"
+              className="flex items-center space-x-1 text-light hover:text-primary transition-colors"
+            >
+              <GiBookmark className="h-5 w-5" />
               <span>Campaigns</span>
             </Link>
 
@@ -42,7 +52,7 @@ export default function Navbar() {
                   onClick={() => setShowUserMenu(!showUserMenu)}
                   className="flex items-center space-x-2 text-light hover:text-primary transition-colors"
                 >
-                  <User className="h-5 w-5" />
+                  <GiSwordman className="h-5 w-5" />
                   <span>{username || 'User'}</span>
                 </button>
               ) : (
@@ -50,7 +60,7 @@ export default function Navbar() {
                   onClick={() => setShowAuthModal(true)}
                   className="flex items-center space-x-2 text-light hover:text-primary transition-colors"
                 >
-                  <User className="h-5 w-5" />
+                  <GiSwordman className="h-5 w-5" />
                   <span>Sign In</span>
                 </button>
               )}
@@ -94,9 +104,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {showAuthModal && (
-        <AuthModal onClose={() => setShowAuthModal(false)} />
-      )}
+      {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
     </nav>
   );
 }

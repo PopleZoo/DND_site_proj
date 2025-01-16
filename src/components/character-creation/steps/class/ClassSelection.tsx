@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { CiBeerMugFull } from "react-icons/ci";
 import { useCharacterCreationStore } from '../../../../store/characterCreationStore';
 import { classes } from '../../../../data/classes/classes';
 import StepHeader from '../../common/StepHeader';
@@ -60,7 +61,7 @@ export default function ClassSelection() {
     if (!selectedClassData) return [];
     return selectedClassData.definition.classFeatures.filter(
       feature => feature.level <= characterLevel
-    );
+    ).sort((a, b) => b.level - a.level); // Sort features by level, newest first
   };
 
   return (
@@ -109,9 +110,12 @@ export default function ClassSelection() {
               }`}
             >
               {classOption.isHomebrew && (
-                <span className="absolute top-4 right-4 px-2 py-1 bg-[#F06543]/20 text-[#F06543] text-xs rounded">
-                  Homebrew
-                </span>
+                <div className="flex items-center">
+                  <CiBeerMugFull className="w-4 h-4 text-[#F09D51]" />
+                  <span className="absolute top-4 right-4 px-2 py-1 bg-[#F06543]/20 text-[#F06543] text-xs rounded">
+                    Homebrew
+                  </span>
+                </div>
               )}
 
               {selectedClass === classOption.id && (

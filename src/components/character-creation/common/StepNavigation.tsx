@@ -18,12 +18,13 @@ export default function StepNavigation({
   hideNext = false,
 }: StepNavigationProps) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-10">
+    <div className="fixed bottom-0 left-0 right-0 bg-[#313638] border-t border-[#F06543] shadow-lg z-10">
       <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between">
         <Button
           onClick={onPrevious}
           variant="outline"
           icon={ArrowLeft}
+          className="text-[#E0DFD5]"
         >
           Back
         </Button>
@@ -32,6 +33,7 @@ export default function StepNavigation({
             onClick={onNext}
             disabled={disableNext}
             icon={ArrowRight}
+            className="text-[#E0DFD5]"
           >
             {nextLabel}
           </Button>
