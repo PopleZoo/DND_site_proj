@@ -10,14 +10,13 @@ export default function AuthCallback() {
   useEffect(() => {
     const handleAuthRedirect = async () => {
       try {
-        const { error: authError } = await supabase.auth.getSessionFromUrl();
+        const { error: authError } = await supabase.auth.exchangeCodeForSession(window.location.href);
         if (authError) throw authError;
-        
-        // Redirect to home page after successful verification
+
         navigate('/', { replace: true });
       } catch (err) {
-        console.error('Error handling auth callback:', err);
-        setError(err instanceof Error ? err.message : 'An error occurred during verification');
+        console.error('Auth callback error:', err);
+        setError(err instanceof Error ? err.message : 'An unknown error occurred.');
       }
     };
 
@@ -42,10 +41,9 @@ export default function AuthCallback() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-dark">
-      <Loader className="w-8 h-8 text-primary animate-spin mb-4" />
-      <h2 className="text-xl font-semibold text-light mb-2">Verifying your email...</h2>
-      <p className="text-light-darker">Please wait while we complete the verification process.</p>
+    <div className="min-h-screen flex items-center justify-center bg-dark">
+      <Loader className="w-8 h-8 text-primary animate-spin" />
+      <h2 className="text-xl font-semibold text-light mt-4">Verifying...</h2>
     </div>
   );
 }

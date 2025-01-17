@@ -21,15 +21,15 @@ export default function Home() {
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card>
           <Swords className="h-12 w-12 text-[#F09D51] mb-4" />
-          <h2 className="text-xl font-semibold mb-2 text-[#E8E9EB]">Character Management</h2>
+          <h2 className="text-xl font-semibold mb-2 text-[#E8E9EB]">Characters</h2>
           <p className="text-[#E0DFD5] mb-4">
-            Create, import, and manage your D&D characters with our intuitive tools.
+            Browse through example characters to see how others have created their adventures
           </p>
           <Link
             to="/characters"
             className="text-[#F09D51] hover:text-[#F06543] font-medium"
           >
-            Manage Characters →
+            View Characters →
           </Link>
         </Card>
 
@@ -37,7 +37,7 @@ export default function Home() {
         <Beer className="h-12 w-12 text-[#F09D51] mb-4" />
         <h2 className="text-xl font-semibold mb-2 text-[#E8E9EB]">Homebrew Content</h2>
           <p className="text-[#E0DFD5] mb-4">
-            Explore and create custom classes, races, items, and more.
+            Discover the full range of homebrew content available for your campaigns.
           </p>
           <Link
             to="/homebrew"
@@ -51,7 +51,7 @@ export default function Home() {
           <GiBookmark   className="h-12 w-12 text-[#F09D51] mb-4" />
           <h2 className="text-xl font-semibold mb-2 text-[#E8E9EB]">Campaign Tools</h2>
           <p className="text-[#E0DFD5] mb-4">
-            Organize your campaigns and keep track of your adventures.
+            Learn how to track your campaign progress and manage your party’s journey.
           </p>
           <Link
             to="/campaigns"

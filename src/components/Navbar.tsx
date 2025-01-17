@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Beer, Swords } from 'lucide-react'; // Importing new icons
 import { GiBookmark, GiSwordman } from 'react-icons/gi'; // Campaign and user icons
@@ -6,11 +6,46 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDiceD20 } from '@fortawesome/free-solid-svg-icons';
 import { useAuthStore } from '../store/authStore';
 import AuthModal from './auth/AuthModal';
+import { supabase } from '../lib/supabase';
+import { Session } from '@supabase/supabase-js';
 
 export default function Navbar() {
-  const { user, username, signOut } = useAuthStore();
+  const [session, setSession] = useState<Session | null>(null); // Track session from Supabase
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+
+  // Check session status on mount
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Sign out function
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    setSession(null); // Clear session after sign-out
+  };
+
+  // Handle clicks outside the dropdown to close it
+  const handleClickOutside = useCallback((e: MouseEvent) => {
+    if (!e.target.closest('.user-menu')) {
+      setShowUserMenu(false); // Close the menu if click is outside
+    }
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [handleClickOutside]);
 
   return (
     <nav className="bg-dark border-b border-dark-light">
@@ -46,14 +81,14 @@ export default function Navbar() {
               <span>Campaigns</span>
             </Link>
 
-            <div className="relative">
-              {user ? (
+            <div className="relative user-menu">
+              {session ? (
                 <button
-                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  onClick={() => setShowUserMenu((prev) => !prev)}
                   className="flex items-center space-x-2 text-light hover:text-primary transition-colors"
                 >
                   <GiSwordman className="h-5 w-5" />
-                  <span>{username || 'User'}</span>
+                  <span>{session.user?.user_metadata?.full_name || 'User'}</span>
                 </button>
               ) : (
                 <button
