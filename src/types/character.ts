@@ -61,6 +61,7 @@ export interface Class {
   definition: ClassDefinition;
   subclass?: Subclass;
   isHomebrew: boolean;
+  features?: ClassFeature[]; // Added features property
 }
 
 export interface ClassDefinition {
