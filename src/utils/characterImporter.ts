@@ -52,10 +52,10 @@ class DndBeyondImporter {
           },
           subclass: cls.subclassDefinition
             ? {
-                name: cls.subclassDefinition.name,
-                description: cls.subclassDefinition.description || '',
-                features: [],
-              }
+              name: cls.subclassDefinition.name,
+              description: cls.subclassDefinition.description || '',
+              features: [],
+            }
             : undefined,
           isHomebrew: cls.definition.isHomebrew,
         })),
@@ -144,7 +144,7 @@ class DndBeyondImporter {
             ritual: spell.definition.ritual,
             concentration: spell.definition.concentration,
           })) || [],
-        },        
+        },
         options: characterData.options,
         choices: characterData.choices,
         actions: characterData.actions,
@@ -166,6 +166,7 @@ class DndBeyondImporter {
           campaignSetting: characterData.campaignSetting,
         },
         inventory: characterData.inventory || [],
+        proficiencyBonus: 0
       };
       
       

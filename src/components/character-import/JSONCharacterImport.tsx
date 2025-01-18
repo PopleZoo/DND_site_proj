@@ -1,44 +1,86 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
+import { Upload } from 'lucide-react';
 import { useCharacterStore } from '../../store/characterStore';
 import { Character } from '../../types/character';
-import FileUploader from './FileUploader';
 
 function calculateArmorClass(data: any): number {
-  let ac = 10;
-  const equippedArmor = data.inventory.find((item: any) =>
-    item.equipped && item.definition.armorClass
-  );
+  const equippedArmor = data.inventory.find((item: any) => item.equipped && item.armorClass);
+  return equippedArmor?.armorClass || 10;
+}
 
-  if (equippedArmor) {
-    ac = equippedArmor.definition.armorClass;
-  }
-
-  return ac;
+function calculateModifier(statValue: number): number {
+  return Math.floor((statValue - 10) / 2);
 }
 
 function calculateInitiative(data: any): number {
-  const dexMod = Math.floor((data.stats[1].value - 10) / 2);
-  return dexMod;
+  return calculateModifier(data.stats.find((stat: any) => stat.id === 2)?.value || 0); // Dex modifier
 }
 
 function calculateSpeed(data: any): number {
-  return data.race?.weightSpeeds?.normal?.walk || 30;
+  return data.race?.speed || 30; // Default speed
 }
 
-const JSONCharacterImport = () => {
+function getAbilityName(id: number): string {
+  const abilities: { [key: number]: string } = {
+    1: 'Strength',
+    2: 'Dexterity',
+    3: 'Constitution',
+    4: 'Intelligence',
+    5: 'Wisdom',
+    6: 'Charisma',
+  };
+  return abilities[id] || 'Unknown';
+}
+
+const JSONCharacterImport: React.FC = () => {
   const { addCharacter } = useCharacterStore();
-  const [characterData, setCharacterData] = useState<any>(null);
+  const [characterData, setCharacterData] = useState<Character | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileUpload = (data: any) => {
-    try {
-      console.log('Uploaded data:', data);
-      console.log('Character data structure:', JSON.stringify(data, null, 2));
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      readFile(file);
+    }
+  };
 
-      if (!data?.data) {
-        throw new Error('Invalid data structure');
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files?.[0];
+    if (file) {
+      readFile(file);
+    }
+    setIsDragOver(false);
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = () => setIsDragOver(false);
+
+  const readFile = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target?.result;
+      if (typeof text === 'string') {
+        try {
+          const data = JSON.parse(text);
+          processCharacterData(data);
+        } catch (err) {
+          console.error('Failed to parse JSON:', err);
+          setError('Invalid JSON format. Please check the file.');
+        }
       }
+    };
+    reader.readAsText(file);
+  };
 
+  const processCharacterData = (data: any) => {
+    try {
       const characterData = data.data;
       const character: Character = {
         id: characterData.id.toString(),
@@ -153,44 +195,48 @@ const JSONCharacterImport = () => {
         notes: Array.isArray(characterData.notes?.personalNotes)
           ? characterData.notes.personalNotes
           : ['No Notes Available'],
+        proficiencyBonus: 0,
       };
 
-      console.log('Mapped character data:', JSON.stringify(character, null, 2));
+      console.log('Processed character:', character);
       addCharacter(character);
       setCharacterData(character);
       setError(null);
-    } catch (error) {
-      console.error('Error while processing file:', error);
-      setError('An error occurred while importing the character. Please check the file format.');
+    } catch (err) {
+      console.error('Error processing character data:', err);
+      setError('An error occurred while importing the character. Please verify the file format.');
       setCharacterData(null);
     }
   };
 
   return (
     <div className="p-4">
-      <FileUploader onFileUpload={handleFileUpload} />
-      {error && <div className="text-red-500">{error}</div>}
-      {characterData ? (
-        <div>
-          <h2>Character Imported Successfully</h2>
-        </div>
-      ) : (
-        <p>No character data available</p>
-      )}
+      <div
+        className={`p-4 border-2 rounded-lg text-center ${isDragOver ? 'border-primary/50 bg-primary/10' : 'border-primary/30'}`}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+        onDragLeave={handleDragLeave}
+      >
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          accept=".json"
+          className="hidden"
+        />
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          className="flex items-center justify-center space-x-2 mx-auto px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark"
+        >
+          <Upload className="h-5 w-5" />
+          <span>Import Character</span>
+        </button>
+        <p className="mt-2 text-sm text-light">Supports JSON character files or drag-and-drop functionality.</p>
+      </div>
+      {error && <div className="text-red-500 mt-4">{error}</div>}
+      {characterData && <div className="mt-4 text-green-500">Character Imported Successfully!</div>}
     </div>
   );
 };
 
 export default JSONCharacterImport;
-
-function getAbilityName(id: number): string {
-  const abilities: { [key: number]: string } = {
-    1: 'Strength',
-    2: 'Dexterity',
-    3: 'Constitution',
-    4: 'Intelligence',
-    5: 'Wisdom',
-    6: 'Charisma',
-  };
-  return abilities[id] || 'Unknown';
-}

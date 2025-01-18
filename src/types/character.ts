@@ -37,6 +37,9 @@ export interface Character {
   inspiration?: boolean;
   optionalFeatures?: OptionalFeatures;
   meta?: Meta;
+  bonusActions?: any[]; // Added property
+  reactions?: any[]; // Added property
+  proficiencyBonus: number; // Newly added property
 }
 
 export interface Race {
@@ -45,6 +48,8 @@ export interface Race {
   isHomebrew: boolean;
   racialTraits: RacialTrait[];
 }
+
+// ... (rest of the interfaces remain unchanged)
 
 export interface RacialTrait {
   name: string;
@@ -61,7 +66,7 @@ export interface Class {
   definition: ClassDefinition;
   subclass?: Subclass;
   isHomebrew: boolean;
-  features?: ClassFeature[]; // Added features property
+  features?: ClassFeature[];
 }
 
 export interface ClassDefinition {

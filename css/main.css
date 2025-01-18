@@ -8,6 +8,12 @@
     --color-gray-600: #1f2937; /* Dark gray for muted text */
     --color-gray-700: #111827; /* Darker gray for backgrounds */
     --color-white: #e5e7eb; /* White for high contrast */
+
+    --color-primary: #F09D51; /* Orange */
+    --color-accent: #F06543; /* Coral Red */
+    --color-dark: #313638; /* Dark Gray */
+    --color-light: #E0DFD5; /* Light Gray */
+    --color-light-lighter: #E8E9EB; /* Off White */
 }
 
 * {
@@ -51,10 +57,64 @@ body {
     .desktop-only {
         display: none;
     }
+
+    .grid-2, .grid-3 {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (min-width: 769px) {
     .mobile-only {
         display: none;
     }
+}
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
+    color: var(--color-primary); /* Updated for palette consistency */
+}
+
+.icon-sm {
+    width: 20px;
+    height: 20px;
+    color: var(--color-light); /* Light gray for subtle icons */
+}
+
+.icon-lg {
+    width: 48px;
+    height: 48px;
+    color: var(--color-accent); /* Coral Red for emphasis */
+}
+
+.primary {
+    color: var(--color-primary);
+}
+
+.accent {
+    color: var(--color-accent);
+}
+
+.dark {
+    color: var(--color-dark);
+}
+
+.light {
+    color: var(--color-light);
+}
+
+.light-lighter {
+    color: var(--color-light-lighter);
 }
