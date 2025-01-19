@@ -3,6 +3,7 @@ import { Character, Stats } from '../../types/character';
 import { useNavigate } from 'react-router-dom';
 import { Shield, Heart, Dumbbell, Dices, Scroll, Wand2, X, Edit, Save } from 'lucide-react';
 import AbilityScores from './sheet/AbilityScores';
+import AbilityChecks from './sheet/AbilityChecks'; // Import the AbilityChecks component
 import SpellList from './sheet/SpellList';
 import InventoryList from './sheet/InventoryList';
 import FeatureList from './sheet/FeatureList';
@@ -41,7 +42,7 @@ export default function CharacterSheet({ character, onClose, onUpdate }: Charact
   };
 
   const stats: Stats[] = character?.stats || []; // Ensure stats is an array
-  const actions = character?.actions || []; // Actions to be included in abilities tab
+  const actions = Array.isArray(character?.actions) ? character.actions : [];
   const bonusActions = character?.bonusActions || [];
   const reactions = character?.reactions || [];
 
@@ -57,7 +58,7 @@ export default function CharacterSheet({ character, onClose, onUpdate }: Charact
 
   return (
     <div className="h-full flex flex-col bg-dark text-light relative p-6">
-      {/* Header */}
+      {/* Header Section */}
       <div className="bg-dark-light border-b border-dark p-4">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-4">
@@ -119,8 +120,8 @@ export default function CharacterSheet({ character, onClose, onUpdate }: Charact
       </div>
 
       {/* Navigation Tabs */}
-      <div className="bg-dark-light border-b border-dark">
-        <div className="flex space-x-1">
+      <div className="bg-dark-light border-b border-dark p-2">
+        <div className="flex justify-center space-x-2 transition-colors">
           {[
             { id: 'abilities', name: 'Abilities', icon: Dices },
             { id: 'features', name: 'Features', icon: Scroll },
@@ -146,136 +147,75 @@ export default function CharacterSheet({ character, onClose, onUpdate }: Charact
         </div>
       </div>
 
-      {/* Content Section */}
-      <div className="flex-1 overflow-y-auto p-4 bg-dark">
-        {activeTab === 'abilities' && (
-          <>
-            <AbilityScores stats={stats} isEditing={isEditing} />
+      {/* Main Content */}
+      <div className="flex-1 overflow-y-auto p-4 bg-dark flex">
+        {/* Core Stats Panel (left column) */}
+        <div className="w-1/3">
+          <AbilityScores stats={stats} isEditing={isEditing} />
+          <AbilityChecks abilityChecks={character?.abilityChecks || []} isEditing={isEditing} /> {/* Fix Ability Checks */}
+        </div>
 
-            {/* Ability Checks */}
-            <div className="mt-6">
-              <h3 className="text-xl font-bold mb-2">Ability Checks</h3>
-              <div className="grid grid-cols-2 gap-4">
-                {stats.map((stat: Stats) => (
-                  <div key={stat.id} className="flex items-center justify-between text-light">
-                    <div className="font-semibold capitalize">{stat.name}</div>
-                    <div className="flex items-center">
-                      <div className="mr-2">
-                        {stat.modifier >= 0 ? `+${stat.modifier}` : stat.modifier}
-                      </div>
-                      <div className="text-sm text-light-darker">(Modifier)</div>
+        {/* Central Content Area */}
+        <div className="w-1/3 px-6">
+          {activeTab === 'abilities' && (
+            <>
+              <div className="mt-6">
+                <h3 className="text-xl font-bold mb-2">Actions</h3>
+                <div className="space-y-4">
+                  {actions.map((action) => (
+                    <div key={action.id} className="text-light">
+                      <div className="font-semibold">{action.name}</div>
+                      <p>{action.description}</p>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
+            </>
+          )}
+
+          {/* Other Tabs */}
+          {activeTab === 'features' && (
+            <FeatureList features={character?.classes?.flatMap((cls) => cls.features) || []} isEditing={isEditing} />
+          )}
+          {activeTab === 'inventory' && (
+            <InventoryList
+              inventory={character?.inventory || []}
+              isEditing={isEditing}
+              onAddItem={(item) => onUpdate?.({ ...character, inventory: [...(character?.inventory || []), item] })}
+              onUpdateItem={(item) =>
+                onUpdate?.({
+                  ...character,
+                  inventory: (character?.inventory || []).map((inv) => (inv.id === item.id ? item : inv)),
+                })
+              }
+            />
+          )}
+          {activeTab === 'spells' && (
+            <SpellList
+              classSpells={character?.spells?.class || []}
+              raceSpells={character?.spells?.race || []}
+              itemSpells={character?.spells?.item || []}
+            />
+          )}
+        </div>
+
+        {/* Side Panel (right column) */}
+        <div className="w-1/3">
+          <div className="space-y-6">
+            {/* Conditions and Status Effects */}
+            <div>
+              <h3 className="text-lg font-semibold">Conditions & Status Effects</h3>
+              {/* List of conditions or status effects here */}
             </div>
 
-            {/* Actions */}
-            <div className="mt-6">
-              <h3 className="text-xl font-bold mb-2">Actions</h3>
-              <div className="space-y-4">
-                {actions.map((action) => (
-                  <div key={action.id} className="text-light">
-                    <div className="font-semibold">{action.name}</div>
-                    <p>{action.description}</p>
-                  </div>
-                ))}
-              </div>
+            {/* Proficiencies */}
+            <div>
+              <h3 className="text-lg font-semibold">Proficiencies</h3>
+              {/* List of proficiencies here */}
             </div>
-          </>
-        )}
-
-        {/* Other Tabs */}
-        {activeTab === 'features' && (
-          <FeatureList features={character?.classes?.flatMap((cls) => cls.features) || []} isEditing={isEditing} />
-        )}
-        {activeTab === 'inventory' && (
-          <InventoryList
-            inventory={character?.inventory || []}
-            isEditing={isEditing}
-            onAddItem={(item) => onUpdate?.({ ...character, inventory: [...(character?.inventory || []), item] })}
-            onUpdateItem={(item) =>
-              onUpdate?.({
-                ...character,
-                inventory: (character?.inventory || []).map((inv) => (inv.id === item.id ? item : inv)),
-              })
-            }
-          />
-        )}
-        {activeTab === 'spells' && (
-          <SpellList
-            classSpells={character?.spells?.class || []}
-            raceSpells={character?.spells?.race || []}
-            itemSpells={character?.spells?.item || []}
-          />
-        )}
+          </div>
+        </div>
       </div>
-
-      {/* Dice Roller Section */}
-<div className="fixed bottom-4 left-4 p-4 space-y-4 z-50">
-  {/* Roll Dice Button */}
-  {isRollOpen && (
-    <button
-    onClick={rollDice}
-    className="bg-primary text-dark font-medium py-2 px-4 rounded-md transition-colors flex items-center space-x-4 focus:outline-none focus:ring-2 focus:ring-accent"
-  >
-    <Dices className="w-5 h-5" />
-    <span>Roll Dice</span>
-  
-    {/* Dice Count Input */}
-    <input
-      type="number"
-      value={rollCount}
-      onChange={(e) => setRollCount(Math.max(1, parseInt(e.target.value)))}
-      placeholder="Count"
-      className="p-2 border border-dark rounded-md bg-primary text-dark w-20 focus:ring-2 focus:ring-accent focus:outline-none"
-    />
-  
-    {/* Dice Type Select */}
-    <select
-      value={dieType}
-      onChange={(e) => setDieType(e.target.value as 'd4' | 'd6' | 'd8' | 'd10' | 'd12' | 'd20' | 'd100')}
-      className="p-2 border border-dark rounded-md bg-primary text-dark w-20 focus:ring-2 focus:ring-accent focus:accent"
-    >
-      {Object.keys(diceSides).map((die) => (
-        <option key={die} value={die}>
-          {die}
-        </option>
-      ))}
-    </select>
-  
-    <span>+</span>
-  
-    {/* Modifier Input */}
-    <input
-      type="number"
-      value={modifier}
-      onChange={(e) => setModifier(parseInt(e.target.value))}
-      placeholder="Modifier"
-      className="p-2 border border-dark rounded-md bg-primary text-dark w-20 focus:ring-2 focus:ring-accent focus:outline-none"
-    />
-  
-    <span>mod =</span>
-  
-    {/* Roll Result */}
-    {rollResult && (
-      <div className="bg-primary text-dark font-medium py-2 px-0 rounded-md w-auto flex items-center space-x-4">
-        <span>Result: {rollResult}</span>
-      </div>
-    )}
-  </button>
-  
-  )}
-
-  {/* Collapsible Dice Roll Section Button */}
-  <button
-    onClick={() => setIsRollOpen(!isRollOpen)}
-    className="bg-primary hover:bg-primary-dark text-dark font-medium py-2 px-4 rounded-md transition-colors flex items-center space-x-4"
-  >
-    {isRollOpen ? <X className="w-5 h-5" /> : <Dices className="w-5 h-5" />}
-  </button>
-</div>
-
-</div>
+    </div>
   );
 }

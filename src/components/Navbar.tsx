@@ -88,7 +88,7 @@ export default function Navbar() {
                   className="flex items-center space-x-2 text-light hover:text-primary transition-colors"
                 >
                   <GiSwordman className="h-5 w-5" />
-                  <span>{session.user?.user_metadata?.full_name || 'User'}</span>
+                  <span>{session.user?.user_metadata?.full_name || session.user?.user_metadata?.username}</span>
                 </button>
               ) : (
                 <button

@@ -28,7 +28,7 @@ export interface Character {
   sourceCategories?: any;
   options?: any;
   choices?: any;
-  actions?: any;
+  actions?: Action[];
   modifiers?: any;
   classSpells?: any;
   customItems?: any;
@@ -37,9 +37,29 @@ export interface Character {
   inspiration?: boolean;
   optionalFeatures?: OptionalFeatures;
   meta?: Meta;
-  bonusActions?: any[]; // Added property
-  reactions?: any[]; // Added property
+  bonusActions?: Action[];
+  reactions?: Action[];
   proficiencyBonus: number; // Newly added property
+  abilityChecks?: AbilityCheck[];  // Optional ability check records
+  proficiencies?: Proficiency[];  // List of character proficiencies
+}
+
+interface Action {
+  id: string; // Unique identifier for the action
+  name: string; // The name of the action (e.g., "Attack", "Cast Spell")
+  description: string; // A brief description of what the action does
+  type: 'Attack' | 'Spell' | 'Bonus' | 'Reaction'; // Type of action (you can expand this if necessary)
+  // Add other relevant properties as needed, such as 'damage', 'cost', etc.
+}
+export interface Proficiency {
+  name: string;  // Name of proficiency (e.g., Acrobatics, Athletics, etc.)
+  type: 'skill' | 'savingThrow' | 'weapon' | 'armor' | 'tool' | 'language';  // Type of proficiency
+  description?: string;  // Optional description for the proficiency (e.g., special effect or use case)
+}
+
+export interface AbilityCheck {
+  abilityName: string;  // Name of the ability like Strength, Dexterity, etc.
+  modifier: number;  // Modifier from character's stat (e.g., +3)
 }
 
 export interface Race {

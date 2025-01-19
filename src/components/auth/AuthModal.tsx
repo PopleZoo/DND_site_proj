@@ -13,6 +13,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
   const [menuVisible, setMenuVisible] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [username, setUsername] = useState(""); // New state for username
   const [isSignUp, setIsSignUp] = useState(false); // Toggle between sign-up and sign-in
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -90,11 +91,19 @@ export default function AuthModal({ onClose }: AuthModalProps) {
           {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
           <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Username" // New input for username
+            className="w-full p-2 mb-4 border border-dark rounded-md bg-dark text-light"
+          />
+
+          <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
-            className="w-full p-2 mb-4 border border-dark rounded-md bg-dark text-dark"
+            className="w-full p-2 mb-4 border border-dark rounded-md bg-dark text-light"
           />
 
           <input
@@ -102,7 +111,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
-            className="w-full p-2 mb-4 border border-dark rounded-md bg-dark text-dark"
+            className="w-full p-2 mb-4 border border-dark rounded-md bg-dark text-light"
           />
 
           <button

@@ -196,6 +196,12 @@ const JSONCharacterImport: React.FC = () => {
           ? characterData.notes.personalNotes
           : ['No Notes Available'],
         proficiencyBonus: 0,
+        proficiencies: characterData.proficiencies || [],
+        abilityChecks: characterData.abilityChecks || [],
+        traits: characterData.traits || [],
+        actions: characterData.actions || [],
+        reactions: characterData.reactions || [],
+
       };
 
       console.log('Processed character:', character);
