@@ -53,7 +53,7 @@ export default function Navbar() {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2">
-              <FontAwesomeIcon icon={faDiceD20} className="h-8 w-8 text-primary" />
+              <FontAwesomeIcon icon={faDiceD20} className="h-8 w-8 text-accent" />
               <span className="font-bold text-xl text-light">Nat20</span>
             </Link>
           </div>
@@ -103,14 +103,14 @@ export default function Navbar() {
               {showUserMenu && (
                 <div className="absolute right-0 mt-2 w-48 bg-dark-light rounded-lg shadow-lg py-2 z-50">
                   <Link
-                    to="/characters"
+                    to="/mycharacters"
                     className="block px-4 py-2 text-light hover:bg-dark hover:text-primary"
                     onClick={() => setShowUserMenu(false)}
                   >
                     My Characters
                   </Link>
                   <Link
-                    to="/homebrew"
+                    to="/myhomebrew"
                     className="block px-4 py-2 text-light hover:bg-dark hover:text-primary"
                     onClick={() => setShowUserMenu(false)}
                   >

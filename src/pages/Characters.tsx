@@ -1,77 +1,51 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useCharacterStore } from '../store/characterStore';
-import { Character } from '../types/character';
-import CharacterCard from '../components/characters/CharacterCard';
-import CharacterSheet from '../components/characters/CharacterSheet';
-import Button from '../components/ui/Button';
-import Modal from '../components/ui/Modal';
-import { UserPlus, FileJson } from 'lucide-react';
-import JSONCharacterImport from '../components/character-import/JSONCharacterImport';
+import React, { useState, useEffect } from 'react';
+import { saveAs } from 'file-saver'; // Import file-saver for downloading files
+import Button from '../components/ui/Button'; // Corrected import for Button component
+import CharacterCard from '../components/characters/CharacterCard'; // Assuming CharacterCard component exists
+import { Character } from '../types/character'; // Importing Character type
+import CharacterSheet from '../components/characters/CharacterSheet'; // Import CharacterSheet
+import Modal from '../components/ui/Modal'; // Import Modal
+import { supabase } from '../lib/supabase'; // Import Supabase client
 
 export default function Characters() {
-  const navigate = useNavigate();
-  const { characters } = useCharacterStore();
-  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
+  const [characters, setCharacters] = useState<Character[]>([]);
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null); // State for selected character
+  const [error, setError] = useState<string | null>(null); // State for error handling
 
-  const handleCreateCharacter = () => {
-    navigate('/create-character');
-  };
+  useEffect(() => {
+    const fetchCharacters = async () => {
+      const { data, error } = await supabase.from('base characters').select('*');
+      if (error) {
+        setError('Error fetching characters: ' + error.message);
+      } else {
+        const mappedCharacters = data.map((item: any) => ({
+          ...item.data, // Assuming the character details are in the 'data' field
+          id: item.character_id, // Map the character_id to id
+          isHomebrew: item.is_homebrew // Map is_homebrew property
+        }));
+        console.log(mappedCharacters); // Log the mapped characters to inspect their structure
+        setCharacters(mappedCharacters as Character[]);
+      }
+    };
 
-  const handleViewDetails = (character: Character) => {
-    setSelectedCharacter(character);
+    fetchCharacters();
+  }, []);
+
+  const handleOpenCharacterSheet = (characterId: string) => {
+    const character = characters.find(char => char.id === characterId);
+    setSelectedCharacter(character || null); // Set selected character
   };
 
   return (
-    <div className="space-y-6">
-      <header className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-primary">Characters</h1>
-        <Button icon={UserPlus} onClick={handleCreateCharacter}>
-          Create Character
-        </Button>
-      </header>
-      
-      {/* Import Section */}
-      <div className="grid md:grid-cols-2 gap-6">
-        <JSONCharacterImport />
-        <div className="p-4 border-2 border-dashed border-primary/30 rounded-lg">
-          <div className="text-center">
-            <FileJson className="h-12 w-12 text-primary mx-auto mb-2" />
-            <h3 className="text-lg font-semibold mb-1 text-light">Need help?</h3>
-            <p className="text-sm text-light-darker mb-4">
-              <a 
-                href="https://www.cbr.com/dnd-beyond-alternatives-import-guide/" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-primary hover:text-primary-dark"
-              >
-                Follow this guide
-              </a>
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Character List */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {characters.map((character) => (
-          <CharacterCard
-            key={character.id}
-            character={character}
-            onViewDetails={() => handleViewDetails(character)}
-          />
-        ))}
-      </div>
-
-      {/* Empty State */}
-      {characters.length === 0 && (
-        <div className="text-center py-12 bg-dark-light rounded-lg">
-          <h2 className="text-xl font-semibold text-light mb-2">No Characters Yet</h2>
-          <p className="text-light-darker mb-6">
-            Create a new character to get started
-          </p>
-        </div>
-      )}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {error && <div className="error">{error}</div>} {/* Display error if any */}
+      {characters.map((character) => (
+        <CharacterCard 
+          key={character.id} 
+          character={character} 
+          onViewDetails={() => handleOpenCharacterSheet(character.id)} 
+        />
+      ))}
 
       {/* Character Sheet Modal */}
       {selectedCharacter && (

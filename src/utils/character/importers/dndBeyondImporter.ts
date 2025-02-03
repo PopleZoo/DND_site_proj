@@ -28,7 +28,8 @@ export class DndBeyondImporter {
         notes: characterData.notes?.personalNotes || [],
         background: this.mapBackground(characterData.background),
         currencies: characterData.currencies || {},
-        preferences: characterData.preferences || {}
+        preferences: characterData.preferences || {},
+        proficiencyBonus: characterData.proficiencyBonus || 0
       };
     } catch (error) {
       console.error('Failed to parse character data:', error);

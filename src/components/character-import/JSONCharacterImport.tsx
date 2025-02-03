@@ -201,7 +201,6 @@ const JSONCharacterImport: React.FC = () => {
         traits: characterData.traits || [],
         actions: characterData.actions || [],
         reactions: characterData.reactions || [],
-
       };
 
       console.log('Processed character:', character);
@@ -218,7 +217,7 @@ const JSONCharacterImport: React.FC = () => {
   return (
     <div className="p-4">
       <div
-        className={`p-4 border-2 rounded-lg text-center ${isDragOver ? 'border-primary/50 bg-primary/10' : 'border-primary/30'}`}
+        className={`p-4 border-2 rounded-lg text-center ${isDragOver ? 'border-accent/50 bg-primary/10' : 'border-accent/30'}`}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
         onDragLeave={handleDragLeave}
@@ -232,7 +231,7 @@ const JSONCharacterImport: React.FC = () => {
         />
         <button
           onClick={() => fileInputRef.current?.click()}
-          className="flex items-center justify-center space-x-2 mx-auto px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark"
+          className="flex items-center justify-center space-x-2 mx-auto px-4 py-2 bg-accent text-white rounded-md hover:bg-accent-dark"
         >
           <Upload className="h-5 w-5" />
           <span>Import Character</span>

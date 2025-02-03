@@ -16,9 +16,9 @@ export default function Button({
 }: ButtonProps) {
   const baseStyles = 'flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-colors';
   const variants = {
-    primary: 'bg-primary hover:bg-primary-dark text-dark',
-    secondary: 'bg-accent hover:bg-accent-dark text-light',
-    outline: 'border border-primary text-primary hover:bg-primary/10'
+    primary: 'bg-accent hover:bg-accent-dark text-light', // Updated to use CSS variable
+    secondary: 'bg-accent hover:bg-accent-dark text-light', // Updated to use CSS variable
+    outline: 'border border-primary text-primary hover:bg-primary/10' // Updated to use CSS variable
   };
 
   return (

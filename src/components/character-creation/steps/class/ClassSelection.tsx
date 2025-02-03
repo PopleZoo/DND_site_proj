@@ -72,13 +72,13 @@ export default function ClassSelection() {
       />
 
       {/* Level Selector */}
-      <div className="bg-[#4a4f52] p-4 rounded-lg">
+      <div className="bg-dark p-4 rounded-lg">
         <div className="flex items-center justify-between">
           <div>
-            <label htmlFor="level-select" className="block text-sm font-medium text-[#E0DFD5]">
+            <label htmlFor="level-select" className="block text-sm font-medium text-light">
               Starting Level
             </label>
-            <p className="text-sm text-[#E0DFD5]/70">
+            <p className="text-sm text-light-darker">
               Choose your character's starting level
             </p>
           </div>
@@ -86,7 +86,7 @@ export default function ClassSelection() {
             id="level-select"
             value={characterLevel}
             onChange={(e) => setCharacterLevel(parseInt(e.target.value))}
-            className="ml-4 px-4 py-2 bg-[#313638] border border-[#313638] rounded-md text-[#E0DFD5] focus:ring-2 focus:ring-[#F09D51] focus:border-transparent"
+            className="ml-4 px-4 py-2 bg-dark border border-dark rounded-md text-light focus:ring-2 focus:ring-primary focus:border-transparent"
           >
             {Array.from({ length: 20 }, (_, i) => i + 1).map((level) => (
               <option key={level} value={level}>Level {level}</option>
@@ -105,30 +105,30 @@ export default function ClassSelection() {
               onClick={() => setSelectedClass(classOption.id)}
               className={`relative p-6 rounded-lg text-left transition-all ${
                 selectedClass === classOption.id
-                  ? 'bg-[#F09D51]/20 border-2 border-[#F09D51]'
-                  : 'bg-[#4a4f52] border-2 border-[#313638] hover:border-[#F09D51]/50'
+                  ? 'bg-primary/20 border-2 border-primary'
+                  : 'bg-dark border-2 border-dark hover:border-primary/50'
               }`}
             >
               {classOption.isHomebrew && (
                 <div className="flex items-center">
-                  <CiBeerMugFull className="w-4 h-4 text-[#F09D51]" />
-                  <span className="absolute top-4 right-4 px-2 py-1 bg-[#F06543]/20 text-[#F06543] text-xs rounded">
+                  <CiBeerMugFull className="w-4 h-4 text-primary" />
+                  <span className="absolute top-4 right-4 px-2 py-1 bg-primary/20 text-primary text-xs rounded">
                     Homebrew
                   </span>
                 </div>
               )}
 
               {selectedClass === classOption.id && (
-                <div className="absolute top-4 right-4 w-6 h-6 bg-[#F09D51] rounded-full flex items-center justify-center">
-                  <Check className="w-4 h-4 text-[#313638]" />
+                <div className="absolute top-4 right-4 w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                  <Check className="w-4 h-4 text-dark" />
                 </div>
               )}
 
               <div className="flex items-center space-x-3 mb-4">
-                <Icon className="w-8 h-8 text-[#F09D51]" />
+                <Icon className="w-8 h-8 text-primary" />
                 <div>
-                  <h3 className="text-lg font-semibold text-[#E0DFD5]">{classOption.name}</h3>
-                  <div className="flex items-center space-x-2 text-sm text-[#E0DFD5]/70">
+                  <h3 className="text-lg font-semibold text-light">{classOption.name}</h3>
+                  <div className="flex items-center space-x-2 text-sm text-light-darker">
                     <span>Hit Die: d{classOption.hitDice}</span>
                     {classOption.definition.spellcastingAbility && (
                       <>
@@ -140,18 +140,18 @@ export default function ClassSelection() {
                 </div>
               </div>
 
-              <p className="text-sm text-[#E0DFD5]/70 mb-4">{classOption.definition.description}</p>
+              <p className="text-sm text-light-darker mb-4">{classOption.definition.description}</p>
 
               <div className="space-y-3">
                 <div>
-                  <h4 className="text-sm font-medium text-[#E0DFD5]">Primary Ability</h4>
-                  <p className="text-sm text-[#E0DFD5]/70">
+                  <h4 className="text-sm font-medium text-light">Primary Ability</h4>
+                  <p className="text-sm text-light-darker">
                     {classOption.definition.primaryAbility}
                   </p>
                 </div>
                 <div>
-                  <h4 className="text-sm font-medium text-[#E0DFD5]">Saving Throws</h4>
-                  <p className="text-sm text-[#E0DFD5]/70">
+                  <h4 className="text-sm font-medium text-light">Saving Throws</h4>
+                  <p className="text-sm text-light-darker">
                     {classOption.definition.savingThrows.join(', ')}
                   </p>
                 </div>
@@ -163,16 +163,16 @@ export default function ClassSelection() {
 
       {/* Class Features at Current Level */}
       {selectedClassData && (
-        <div className="bg-[#4a4f52] p-6 rounded-lg">
-          <h3 className="text-xl font-bold text-[#E0DFD5] mb-4">
+        <div className="bg-dark p-6 rounded-lg">
+          <h3 className="text-xl font-bold text-light mb-4">
             Features at Level {characterLevel}
           </h3>
           <div className="space-y-4">
             {getAvailableFeatures().map((feature) => (
-              <div key={feature.name} className="bg-[#313638] p-4 rounded-lg">
-                <h4 className="font-medium text-[#F09D51]">{feature.name}</h4>
-                <p className="text-sm text-[#E0DFD5]/70 mt-2">{feature.description}</p>
-                <div className="text-xs text-[#E0DFD5]/50 mt-1">
+              <div key={feature.name} className="bg-dark-light p-4 rounded-lg">
+                <h4 className="font-medium text-primary">{feature.name}</h4>
+                <p className="text-sm text-light-darker mt-2">{feature.description}</p>
+                <div className="text-xs text-light-darker mt-1">
                   Gained at level {feature.level}
                 </div>
               </div>

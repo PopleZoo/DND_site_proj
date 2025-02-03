@@ -1,4 +1,6 @@
 import React from 'react';
+import { saveAs } from 'file-saver'; // Import file-saver for downloading files
+
 import { Character } from '../../types/character';
 import Button from '../ui/Button';
 import { Shield, Heart, Dumbbell } from 'lucide-react';
@@ -67,8 +69,19 @@ export default function CharacterCard({ character, onViewDetails }: CharacterCar
         </div>
       </div>
 
-      <Button onClick={onViewDetails} variant="primary" className="w-full">
+      <Button onClick={onViewDetails} variant="primary" className="w-full"> 
         View Details
+      </Button>
+      <Button 
+        onClick={() => {
+          const json = JSON.stringify(character, null, 2); // Convert character to JSON
+          const blob = new Blob([json], { type: 'application/json' }); // Create a blob
+          saveAs(blob, `${character.name}.json`); // Trigger download
+        }} 
+        variant="secondary" 
+        className="w-full mt-2"
+      >
+        Download JSON
       </Button>
     </div>
   );

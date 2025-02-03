@@ -7,11 +7,11 @@ export default function HomebrewToggle() {
 
   return (
     <div className="flex items-center justify-end mb-6 space-x-2">
-      <span className="text-sm text-gray-600">Community Homebrew</span>
+      <span className="text-sm text-light">Community Homebrew</span> {/* Updated color */}
       <button
         onClick={toggleHomebrew}
         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-          homebrewEnabled ? 'bg-purple-600' : 'bg-gray-200'
+          homebrewEnabled ? 'bg-primary' : 'bg-gray-200' // Updated color
         }`}
       >
         <span
@@ -20,7 +20,7 @@ export default function HomebrewToggle() {
           }`}
         />
       </button>
-      <Beaker className={`w-5 h-5 ${homebrewEnabled ? 'text-purple-600' : 'text-gray-400'}`} />
+      <Beaker className={`w-5 h-5 ${homebrewEnabled ? 'text-primary' : 'text-gray-400'}`} /> {/* Updated color */}
     </div>
   );
 }

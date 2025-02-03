@@ -18,7 +18,8 @@ export const backgrounds = [
       name: 'Shelter of the Faithful',
       description: 'You command respect from religious followers and can perform ceremonies.'
     },
-    isHomebrew: false
+    isHomebrew: false,
+    isCustom: false // Added property
   },
   {
     id: 'custom',
@@ -47,6 +48,7 @@ export const backgrounds = [
         gold: 50
       }
     },
-    isHomebrew: false
+    isHomebrew: false,
+    isCustom: true // Added property
   }
 ];

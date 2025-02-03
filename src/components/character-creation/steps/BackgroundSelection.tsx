@@ -29,8 +29,8 @@ export default function BackgroundSelection() {
   return (
     <div className="space-y-6">
       <div className="text-center max-w-2xl mx-auto">
-        <h2 className="text-2xl font-bold text-purple-900 mb-2">Choose Your Background</h2>
-        <p className="text-gray-600">
+        <h2 className="text-2xl font-bold text-light mb-2">Choose Your Background</h2> {/* Updated color */}
+        <p className="text-light">
           Your background reveals where you came from and your place in the world.
         </p>
       </div>

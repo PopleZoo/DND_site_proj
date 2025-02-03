@@ -4,6 +4,11 @@
 
 :root {
   color-scheme: dark;
+  --color-primary: #140000; /* Updated to main.css color */
+  --color-accent: #2e0000; /* Updated to main.css color */
+  --color-dark: #4c1a1a; /* Updated to main.css color */
+  --color-light: #762828; /* Updated to main.css color */
+  --color-light-lighter: #000000; /* Updated to main.css color */
 }
 
 body {

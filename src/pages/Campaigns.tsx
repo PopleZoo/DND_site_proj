@@ -5,7 +5,7 @@ export default function Campaigns() {
   return (
     <div className="space-y-6">
       <header className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-primary">Campaigns</h1>
+        <h1 className="text-3xl font-bold text-primary">Campaigns</h1> {/* Updated color */}
         <button className="flex items-center space-x-2 px-4 py-2 bg-primary text-dark rounded-md hover:bg-primary-dark transition-colors">
           <Plus className="h-5 w-5" />
           <span>New Campaign</span>
@@ -16,7 +16,7 @@ export default function Campaigns() {
         {[1, 2, 3].map((i) => (
           <div key={i} className="bg-dark-light p-6 rounded-lg">
             <div className="mb-4">
-              <h2 className="text-xl font-semibold text-light">Curse of Strahd</h2>
+              <h2 className="text-xl font-semibold text-light">Curse of Strahd</h2> {/* Updated color */}
               <p className="text-light-darker">Gothic Horror Campaign</p>
             </div>
             

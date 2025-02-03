@@ -65,11 +65,10 @@ export interface AbilityCheck {
 export interface Race {
   baseRaceName: string;
   subRaceName?: string;
+  VariantName?: string;
   isHomebrew: boolean;
   racialTraits: RacialTrait[];
 }
-
-// ... (rest of the interfaces remain unchanged)
 
 export interface RacialTrait {
   name: string;
@@ -312,3 +311,4 @@ export interface Meta {
   statusSlug?: any;
   campaignSetting?: any;
 }
+

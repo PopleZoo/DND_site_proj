@@ -12,8 +12,8 @@ export default function SubclassSelection({ subclasses, onSelect }: SubclassSele
 
   return (
     <div className="space-y-4">
-      <h3 className="text-xl font-semibold">Choose Your Subclass</h3>
-      <p className="text-gray-600">
+      <h3 className="text-xl font-semibold text-light">Choose Your Subclass</h3> {/* Updated color */}
+      <p className="text-light-darker">
         At 3rd level, you choose a subclass that shapes your abilities and playstyle.
       </p>
       
@@ -27,18 +27,18 @@ export default function SubclassSelection({ subclasses, onSelect }: SubclassSele
             }}
             className={`relative p-6 rounded-lg text-left transition-all ${
               selectedSubclass === subclass.id
-                ? 'bg-purple-50 border-2 border-purple-600'
-                : 'bg-white border-2 border-gray-100 hover:border-purple-200'
+                ? 'bg-primary/20 border-2 border-primary' // Updated color
+                : 'bg-dark border-2 border-dark hover:border-primary/50'
             }`}
           >
             {selectedSubclass === subclass.id && (
-              <div className="absolute top-4 right-4 w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center">
-                <Check className="w-4 h-4 text-white" />
+              <div className="absolute top-4 right-4 w-6 h-6 bg-primary rounded-full flex items-center justify-center"> {/* Updated color */}
+                <Check className="w-4 h-4 text-dark" />
               </div>
             )}
 
-            <h4 className="font-semibold">{subclass.name}</h4>
-            <p className="text-sm text-gray-600 mt-2">{subclass.description}</p>
+            <h4 className="font-semibold text-light">{subclass.name}</h4> {/* Updated color */}
+            <p className="text-sm text-light-darker mt-2">{subclass.description}</p> {/* Updated color */}
           </button>
         ))}
       </div>

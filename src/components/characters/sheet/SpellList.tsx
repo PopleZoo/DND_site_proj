@@ -40,7 +40,7 @@ export default function SpellList({
         .map(([level, levelSpells]) => (
           <div key={level} className="space-y-4">
             <div className="flex items-center space-x-2">
-              <Shield className="w-5 h-5 text-primary" />
+              <Shield className="w-5 h-5 text-primary" /> {/* Updated color */}
               <h3 className="text-lg font-semibold text-light">
                 {level === '0' ? 'Cantrips' : `Level ${level} Spells`}
               </h3>
@@ -52,7 +52,7 @@ export default function SpellList({
                   className="bg-dark-light p-4 rounded-lg border border-dark hover:border-primary/30 transition-colors"
                 >
                   <div className="flex items-start space-x-3">
-                    <Star className="w-5 h-5 text-primary mt-1" />
+                    <Star className="w-5 h-5 text-primary" /> {/* Updated color */}
                     <div className="flex-1">
                       <div className="flex justify-between items-start">
                         <h4 className="font-medium text-light">{spell.name}</h4>
@@ -94,12 +94,14 @@ export default function SpellList({
                             placeholder="Spell description..."
                           />
                         ) : (
-                          <div
-                            className="prose prose-sm max-w-none text-light-darker"
-                            dangerouslySetInnerHTML={{
-                              __html: spell.description
-                            }}
-                          />
+                          <div className="prose prose-sm max-w-none text-light-darker">
+                            {/* Render the HTML content */}
+                            <div
+                              dangerouslySetInnerHTML={{
+                                __html: spell.description,
+                              }}
+                            />
+                          </div>
                         )}
                       </div>
                     </div>

@@ -40,11 +40,17 @@ export default function AuthModal({ onClose }: AuthModalProps) {
   const handleAuth = async () => {
     setError(null); // Clear previous error
     if (isSignUp) {
-      // Sign-up logic
+      // Sign-up logic with metadata
       const { error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            username, // Pass username to metadata
+          },
+        },
       });
+  
       if (error) {
         setError(error.message);
       } else {
@@ -56,11 +62,13 @@ export default function AuthModal({ onClose }: AuthModalProps) {
         email,
         password,
       });
+  
       if (error) {
         setError(error.message);
       }
     }
   };
+  
 
   const signInWithGoogle = async () => {
     await supabase.auth.signInWithOAuth({

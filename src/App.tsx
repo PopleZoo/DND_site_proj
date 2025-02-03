@@ -3,7 +3,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Characters from './pages/Characters';
+import MyCharacters from './pages/usersPages/MyCharacters';
 import Homebrew from './pages/Homebrew';
+import MyHomebrew from './pages/usersPages/MyHomebrew';
 import Campaigns from './pages/Campaigns';
 import CharacterCreationWizard from './components/character-creation/CharacterCreationWizard';
 import AuthCallback from './components/auth/AuthCallback';
@@ -17,8 +19,10 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/characters" element={<Characters />} />
+            <Route path="/mycharacters" element={<MyCharacters />} />
             <Route path="/create-character" element={<CharacterCreationWizard />} />
             <Route path="/homebrew" element={<Homebrew />} />
+            <Route path="/myhomebrew" element={<MyHomebrew />} />
             <Route path="/campaigns" element={<Campaigns />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
           </Routes>

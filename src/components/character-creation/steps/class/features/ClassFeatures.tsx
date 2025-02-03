@@ -46,7 +46,7 @@ export default function ClassFeatures({ classData, level }: ClassFeaturesProps) 
       
       {previousFeatures.length > 0 && (
         <div className="border-t pt-8">
-          <h3 className="text-lg font-semibold mb-4">Previous Features</h3>
+          <h3 className="text-lg font-semibold text-light mb-4">Previous Features</h3> {/* Updated color */}
           {Array.from({ length: level - 1 }, (_, i) => i + 1)
             .reverse()
             .map(lvl => {

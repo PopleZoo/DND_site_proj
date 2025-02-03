@@ -1,19 +1,16 @@
 :root {
-    --color-purple-50: #635985; /* Lightest purple */
-    --color-purple-100: #443C68; /* Medium purple */
-    --color-purple-600: #393053; /* Dark purple */
-    --color-purple-700: #18122B; /* Darkest purple */
-    --color-gray-50: #d1d5db; /* Light gray for text */
-    --color-gray-100: #e5e7eb; /* Lighter gray for accents */
-    --color-gray-600: #1f2937; /* Dark gray for muted text */
-    --color-gray-700: #111827; /* Darker gray for backgrounds */
-    --color-white: #e5e7eb; /* White for high contrast */
 
-    --color-primary: #F09D51; /* Orange */
-    --color-accent: #F06543; /* Coral Red */
-    --color-dark: #313638; /* Dark Gray */
-    --color-light: #E0DFD5; /* Light Gray */
-    --color-light-lighter: #E8E9EB; /* Off White */
+    --color-1: #140000; /* New Color 1 */
+    --color-2: #2e0000; /* New Color 2 */
+    --color-3: #4c1a1a; /* New Color 3 */
+    --color-4: #762828; /* New Color 4 */
+    --color-5: #000000; /* New Color 5 */
+
+    --color-primary: #140000; /* Updated */
+    --color-accent: #2e0000; /* Updated */
+    --color-dark: #4c1a1a; /* Updated */
+    --color-light: #762828; /* Updated */
+    --color-light-lighter: #000000; /* Updated */
 }
 
 * {

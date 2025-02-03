@@ -122,7 +122,7 @@ export default function CharacterSheet({ character, onClose, onUpdate }: Charact
       {/* Navigation Tabs */}
       <div className="bg-dark-light border-b border-dark p-2">
         <div className="flex justify-center space-x-2 transition-colors">
-          {[
+          {[ 
             { id: 'abilities', name: 'Abilities', icon: Dices },
             { id: 'features', name: 'Features', icon: Scroll },
             { id: 'inventory', name: 'Inventory', icon: Shield },
