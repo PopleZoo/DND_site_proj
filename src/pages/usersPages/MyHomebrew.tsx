@@ -91,8 +91,8 @@ const MyHomebrew = () => {
         console.log('Fetched spells:', data); // Debugging log
         // Check the structure of the fetched data
         console.log('Fetched spells structure:', JSON.stringify(data, null, 2));
-console.log('Fetched spells structure:', JSON.stringify(data, null, 2));
-setSpells(data as Spell[]);
+        console.log('Fetched spells structure:', JSON.stringify(data, null, 2));
+        setSpells(data as Spell[]);
 
       }
     };
