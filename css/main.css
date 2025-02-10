@@ -115,3 +115,10 @@ body {
 .light-lighter {
     color: var(--color-light-lighter);
 }
+.table-border {
+    border: 1px solid var(--color-dark); /* Change '--primary' to any other color variable if desired */
+  }
+  
+  th, td {
+    border: 1px solid var(--color-dark); /* This will apply the border color to each cell */
+  }

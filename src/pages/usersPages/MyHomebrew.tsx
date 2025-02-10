@@ -39,7 +39,34 @@ const MyHomebrew = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [templateType, setTemplateType] = useState('');
   const [spells, setSpells] = useState<Spell[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(''); // Default search term
+  const [selectedTypeFilter, setSelectedTypeFilter] = useState(''); // New filter state
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [spellsPerPage] = useState(10); // Number of spells to show per page
+
+  const [pageInput, setPageInput] = useState(currentPage.toString());
+
+  const [levelFilter, setLevelFilter] = useState('');
+  const [schoolFilter, setSchoolFilter] = useState('');
+  const [componentFilter, setComponentFilter] = useState('');
+
+const handlePageInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const value = event.target.value;
+  if (/^\d*$/.test(value)) {
+    setPageInput(value);
+  }
+};
+
+const handlePageJump = () => {
+  const newPage = parseInt(pageInput, 10);
+  if (newPage > 0 && newPage <= Math.ceil(filteredSpells.length / spellsPerPage)) {
+    setCurrentPage(newPage);
+  } else {
+    setPageInput(currentPage.toString()); // reset to current page if input is out of range
+  }
+};
 
   useEffect(() => {
     const fetchHomebrewData = async () => {
@@ -88,12 +115,7 @@ const MyHomebrew = () => {
       if (error) {
         console.error('Error fetching spells:', error);
       } else {
-        console.log('Fetched spells:', data); // Debugging log
-        // Check the structure of the fetched data
-        console.log('Fetched spells structure:', JSON.stringify(data, null, 2));
-        console.log('Fetched spells structure:', JSON.stringify(data, null, 2));
-        setSpells(data as Spell[]);
-
+        setSpells(data);
       }
     };
 
@@ -132,12 +154,58 @@ const MyHomebrew = () => {
     }
   };
 
-  const filteredSpells = spells.filter(spell => 
-    spell.name?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filter logic
+  const filteredHomebrewData = homebrewData.filter(item => {
+    return (
+      item.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      (selectedTypeFilter ? item.type === selectedTypeFilter : true)
+    );
+  });
+
+  const filteredSpells = spells.filter((spell: Spell) => {
+    return (
+      spell.Name?.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      (levelFilter ? spell.Level === levelFilter : true) &&
+      (schoolFilter ? spell.School === schoolFilter : true) &&
+      (componentFilter ? spell.Components?.toLowerCase().includes(componentFilter.toLowerCase()) : true)
+    );
+  });
+
+  // Pagination logic for spells
+  const indexOfLastSpell = currentPage * spellsPerPage;
+  const indexOfFirstSpell = indexOfLastSpell - spellsPerPage;
+  const currentSpells = filteredSpells.slice(indexOfFirstSpell, indexOfLastSpell);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   return (
     <div className="space-y-6">
+      {/* Filters */}
+      <section>
+        <h2 className="text-2xl font-bold text-primary mb-4">Filter Homebrew</h2>
+        <div className="flex space-x-4">
+          <input
+            type="text"
+            placeholder="Search..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="p-2 border rounded"
+          />
+          <select
+            value={selectedTypeFilter}
+            onChange={(e) => setSelectedTypeFilter(e.target.value)}
+            className="p-2 border rounded"
+          >
+            <option value="">All Types</option>
+            {['Magic Items', 'Species', 'Spells', 'Classes'].map(type => (
+              <option key={type} value={type}>{type}</option>
+            ))}
+          </select>
+        </div>
+      </section>
+
       {/* Cards for Homebrew Types */}
       <section>
         <h2 className="text-2xl font-bold text-primary mb-4">Create Homebrew</h2>
@@ -172,12 +240,12 @@ const MyHomebrew = () => {
                 </tr>
               </thead>
               <tbody>
-                {homebrewData.length === 0 ? (
+                {filteredHomebrewData.length === 0 ? (
                   <tr>
                     <td colSpan={3} className="p-2 text-center">No Content Yet</td>
                   </tr>
                 ) : (
-                  homebrewData.map(item => (
+                  filteredHomebrewData.map(item => (
                     <tr
                       key={item.id}
                       className="cursor-pointer hover:bg-light-dark"
@@ -196,79 +264,115 @@ const MyHomebrew = () => {
       </section>
 
       {/* Spells Popup */}
-      {showPopup && templateType === 'Spells' && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-dark p-4 rounded">
-            <h2 className="text-accent font-bold mb-2">Select a Spell</h2>
-            <input
-              type="text"
-              placeholder="Search spells..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full p-2 mb-4 border rounded"
-            />
-            <table className="min-w-full text-primary">
-              <thead>
-                <tr>
-                  <th className="p-2">Name</th>
-                  <th className="p-2">Level</th>
-                  <th className="p-2">School</th>
-                  <th className="p-2">Casting Time</th>
-                  <th className="p-2">Duration</th>
-                  <th className="p-2">Range</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredSpells.map(spell => (
-                  <tr key={spell.id} className="hover:bg-gray-200 cursor-pointer">
-                    <td className="p-2">{spell.name}</td>
-                    <td className="p-2">{spell.level}</td>
-                    <td className="p-2">{spell.school}</td>
-                    <td className="p-2">{spell.castingTime}</td>
-                    <td className="p-2">{spell.duration}</td>
-                    <td className="p-2">{spell.range}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <button onClick={() => setShowPopup(false)} className="mt-2 p-2 bg-primary text-dark font-bold rounded">
-              Close
-            </button>
-          </div>
-        </div>
-      )}
+{showPopup && (
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="bg-dark p-4 rounded shadow-lg w-full max-w-4xl">
+      <h2 className="text-accent font-bold mb-2">Select a Spell</h2>
 
-      {/* Popup for Detailed View & Edit */}
-      {showPopup && selectedItem && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-4 rounded">
-            <h2 className="text-xl font-bold mb-2">Edit {selectedItem.name}</h2>
-            <div>
-              <label className="block text-sm">Name</label>
-              <input
-                type="text"
-                value={selectedItem.name}
-                onChange={(e) => setSelectedItem({ ...selectedItem, name: e.target.value })}
-                className="w-full p-2 mb-4 border rounded"
-              />
-            </div>
-            <div>
-              <label className="block text-sm">Description</label>
-              <textarea
-                value={selectedItem.description}
-                onChange={(e) => setSelectedItem({ ...selectedItem, description: e.target.value })}
-                className="w-full p-2 mb-4 border rounded"
-              />
-            </div>
-            <button onClick={handleEditSave} className="mt-4 p-2 bg-primary text-white rounded">
-              Save Changes
-            </button>
-            <button onClick={() => setShowPopup(false)} className="mt-2 p-2 bg-gray-300 rounded">
-              Cancel
-            </button>
-          </div>
+      {/* Search Bar and Filters */}
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Search spells..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full p-2 mb-2 border border-dark-400 rounded"
+        />
+        <div className="flex gap-4">
+          {/* Level Filter */}
+          <select
+            value={levelFilter}
+            onChange={(e) => setLevelFilter(e.target.value)}
+            className="p-2 border rounded"
+          >
+            <option value="">All Levels</option>
+            {[...Array(9).keys()].map(level => (
+              <option key={level} value={level + 1}>Level {level + 1}</option>
+            ))}
+          </select>
+
+          {/* School Filter */}
+          <select
+            value={schoolFilter}
+            onChange={(e) => setSchoolFilter(e.target.value)}
+            className="p-2 border rounded border"
+          >
+            <option value="">All Schools</option>
+            {['Abjuration', 'Conjuration', 'Divination', 'Enchantment', 'Evocation', 'Illusion', 'Necromancy', 'Transmutation'].map(school => (
+              <option key={school} value={school}>{school}</option>
+            ))}
+          </select>
+
+          
         </div>
-      )}
+      </div>
+
+      {/* Spell Table */}
+      <table className="min-w-full text-primary table-auto">
+        <thead>
+          <tr className="bg-gray-700 text-accent">
+            <th className="p-3 border-b-2">Name</th>
+            <th className="p-3 border-b-2">Level</th>
+            <th className="p-3 border-b-2">School</th>
+            <th className="p-3 border-b-2">Casting Time</th>
+            <th className="p-3 border-b-2">Duration</th>
+            <th className="p-3 border-b-2">Range</th>
+          </tr>
+        </thead>
+        <tbody>
+          {currentSpells.length === 0 ? (
+            <tr>
+              <td colSpan={6} className="p-3 text-center text-accent">No Spells Found</td>
+            </tr>
+          ) : (
+            currentSpells.map(spell => (
+              <tr key={spell.id} className="hover:bg-dark-light cursor-pointer">
+                <td className="p-3 border-b">{spell.Name}</td>
+                <td className="p-3 border-b">{spell.Level}</td>
+                <td className="p-3 border-b">{spell.School}</td>
+                <td className="p-3 border-b">{spell.CastingTime}</td>
+                <td className="p-3 border-b">{spell.Duration}</td>
+                <td className="p-3 border-b">{spell.Range}</td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+
+      {/* Pagination */}
+      <span className="flex justify-center items-center mt-4">
+        <div className="flex items-center">
+          <button
+            className="p-2 text-dark bg-primary rounded mr-2"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+          <span className="p-2 text-accent bg-dark rounded mr-2">Page</span>
+          <input
+            type="text"
+            value={pageInput}
+            onChange={handlePageInputChange}
+            onBlur={handlePageJump}
+            className="p-2 text-accent bg-dark rounded w-16 text-center"
+          />
+          <span className="p-2 text-accent bg-dark rounded ml-2">
+            / {Math.ceil(filteredSpells.length / spellsPerPage)}
+          </span>
+          <button
+            className="p-2 text-dark bg-primary rounded ml-2"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={indexOfLastSpell >= filteredSpells.length}
+          >
+            Next
+          </button>
+        </div>
+      </span>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };

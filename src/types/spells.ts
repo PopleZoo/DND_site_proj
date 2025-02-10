@@ -13,6 +13,9 @@ export interface Spell {
   name: string;
   level: number;
   school: SpellSchool;
+  castingTime: string; // New property
+  duration: string;    // New property
+  range: string;       // New property
   description: string;
 }
 
