@@ -11,25 +11,25 @@ interface HomebrewItem {
 
 interface Spell {
   id: string;
-  name: string | null; // Name of the spell
-  level: string | null; // Level of the spell
-  school: string | null; // School of magic
-  castingTime: string | null; // Casting time
-  duration: string | null; // Duration
-  range: string | null; // Range
-  area: string | null; // Area of effect
-  save: string | null; // Save type
-  damageEffect: string | null; // Damage or effect description
-  ritual: boolean | null; // Is it a ritual spell?
-  concentration: boolean | null; // Is it a concentration spell?
-  verbal: boolean | null; // Requires verbal components?
-  somatic: boolean | null; // Requires somatic components?
-  material: boolean | null; // Requires material components?
-  materialDetails: string | null; // Details about material components
-  source: string | null; // Source of the spell
-  details: string | null; // Additional details
-  attack: string | null; // Attack type
-  components: string | null; // Components required
+  Name: string | null; // Name of the spell
+  Level: string | null; // Level of the spell
+  School: string | null; // School of magic
+  CastingTime: string | null; // Casting time
+  Duration: string | null; // Duration
+  Range: string | null; // Range
+  Area: string | null; // Area of effect
+  Save: string | null; // Save type
+  DamageEffect: string | null; // Damage or effect description
+  Ritual: boolean | null; // Is it a ritual spell?
+  Concentration: boolean | null; // Is it a concentration spell?
+  Verbal: boolean | null; // Requires verbal components?
+  Somatic: boolean | null; // Requires somatic components?
+  Material: boolean | null; // Requires material components?
+  MaterialDetails: string | null; // Details about material components
+  Source: string | null; // Source of the spell
+  Details: string | null; // Additional details
+  Attack: string | null; // Attack type
+  Components: string | null; // Components required
 }
 
 const MyHomebrew = () => {
@@ -50,23 +50,27 @@ const MyHomebrew = () => {
 
   const [levelFilter, setLevelFilter] = useState('');
   const [schoolFilter, setSchoolFilter] = useState('');
-  const [componentFilter, setComponentFilter] = useState('');
 
-const handlePageInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  const value = event.target.value;
-  if (/^\d*$/.test(value)) {
-    setPageInput(value);
-  }
-};
+  // Sorting state
+  const [sortColumn, setSortColumn] = useState<keyof Spell | null>(null);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
-const handlePageJump = () => {
-  const newPage = parseInt(pageInput, 10);
-  if (newPage > 0 && newPage <= Math.ceil(filteredSpells.length / spellsPerPage)) {
-    setCurrentPage(newPage);
-  } else {
-    setPageInput(currentPage.toString()); // reset to current page if input is out of range
-  }
-};
+  const handlePageInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    if (/^\d*$/.test(value)) {
+      setPageInput(value);
+    }
+  };
+
+  const handlePageJump = () => {
+    const newPage = parseInt(pageInput, 10);
+    if (newPage > 0 && newPage <= Math.ceil(filteredSpells.length / spellsPerPage)) {
+      setCurrentPage(newPage);
+      setPageInput(newPage.toString()); // Update the page input to reflect the current page
+    } else {
+      setPageInput(currentPage.toString()); // reset to current page if input is out of range
+    }
+  };
 
   useEffect(() => {
     const fetchHomebrewData = async () => {
@@ -162,22 +166,50 @@ const handlePageJump = () => {
     );
   });
 
-  const filteredSpells = spells.filter((spell: Spell) => {
+const filteredSpells = spells.filter((spell: Spell) => {
+    console.log('Filtering spell:', spell); // Debugging line
+    console.log('Level Filter:', levelFilter); // Debugging line
+    console.log('School Filter:', schoolFilter); // Debugging line
     return (
-      spell.Name?.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (levelFilter ? spell.Level === levelFilter : true) &&
-      (schoolFilter ? spell.School === schoolFilter : true) &&
-      (componentFilter ? spell.Components?.toLowerCase().includes(componentFilter.toLowerCase()) : true)
+        spell.Name?.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        (levelFilter ? spell.Level === levelFilter : true) &&
+        (schoolFilter ? spell.School === schoolFilter : true) 
     );
+});
+
+
+
+  console.log('Filtered Spells:', filteredSpells); // Debugging line
+
+  // Sorting logic
+  const sortedSpells = [...filteredSpells].sort((a, b) => {
+    const aValue = a[sortColumn as keyof Spell] ?? '';
+    const bValue = b[sortColumn as keyof Spell] ?? '';
+    if (sortOrder === 'asc') {
+      return aValue > bValue ? 1 : -1;
+    } else {
+      return aValue < bValue ? 1 : -1;
+    }
   });
 
   // Pagination logic for spells
   const indexOfLastSpell = currentPage * spellsPerPage;
   const indexOfFirstSpell = indexOfLastSpell - spellsPerPage;
-  const currentSpells = filteredSpells.slice(indexOfFirstSpell, indexOfLastSpell);
+  const currentSpells = sortedSpells.slice(indexOfFirstSpell, indexOfLastSpell);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+    setPageInput(page.toString()); // Update the page input to reflect the current page
+  };
+
+  // Sorting handler
+  const handleSort = (column: keyof Spell) => {
+    if (sortColumn === column) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(column);
+      setSortOrder('asc');
+    }
   };
 
   return (
@@ -268,7 +300,7 @@ const handlePageJump = () => {
   <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
     <div className="bg-dark p-4 rounded shadow-lg w-full max-w-4xl">
       <h2 className="text-accent font-bold mb-2">Select a Spell</h2>
-
+      
       {/* Search Bar and Filters */}
       <div className="mb-4">
         <input
@@ -302,8 +334,6 @@ const handlePageJump = () => {
               <option key={school} value={school}>{school}</option>
             ))}
           </select>
-
-          
         </div>
       </div>
 
@@ -311,12 +341,12 @@ const handlePageJump = () => {
       <table className="min-w-full text-primary table-auto">
         <thead>
           <tr className="bg-gray-700 text-accent">
-            <th className="p-3 border-b-2">Name</th>
-            <th className="p-3 border-b-2">Level</th>
-            <th className="p-3 border-b-2">School</th>
-            <th className="p-3 border-b-2">Casting Time</th>
-            <th className="p-3 border-b-2">Duration</th>
-            <th className="p-3 border-b-2">Range</th>
+            <th className="p-3 border-b-2 cursor-pointer" onClick={() => handleSort('Name')}>Name {sortColumn === 'Name' && (sortOrder === 'asc' ? '▲' : '▼')}</th>
+            <th className="p-3 border-b-2 cursor-pointer" onClick={() => handleSort('Level')}>Level {sortColumn === 'Level' && (sortOrder === 'asc' ? '▲' : '▼')}</th>
+            <th className="p-3 border-b-2 cursor-pointer" onClick={() => handleSort('School')}>School {sortColumn === 'School' && (sortOrder === 'asc' ? '▲' : '▼')}</th>
+            <th className="p-3 border-b-2 cursor-pointer" onClick={() => handleSort('CastingTime')}>Casting Time {sortColumn === 'CastingTime' && (sortOrder === 'asc' ? '▲' : '▼')}</th>
+            <th className="p-3 border-b-2 cursor-pointer" onClick={() => handleSort('Duration')}>Duration {sortColumn === 'Duration' && (sortOrder === 'asc' ? '▲' : '▼')}</th>
+            <th className="p-3 border-b-2 cursor-pointer" onClick={() => handleSort('Range')}>Range {sortColumn === 'Range' && (sortOrder === 'asc' ? '▲' : '▼')}</th>
           </tr>
         </thead>
         <tbody>
@@ -327,12 +357,12 @@ const handlePageJump = () => {
           ) : (
             currentSpells.map(spell => (
               <tr key={spell.id} className="hover:bg-dark-light cursor-pointer">
-                <td className="p-3 border-b">{spell.Name}</td>
-                <td className="p-3 border-b">{spell.Level}</td>
-                <td className="p-3 border-b">{spell.School}</td>
-                <td className="p-3 border-b">{spell.CastingTime}</td>
-                <td className="p-3 border-b">{spell.Duration}</td>
-                <td className="p-3 border-b">{spell.Range}</td>
+                <td className="p-3 border-b">{spell.Name ?? 'N/A'}</td>
+                <td className="p-3 border-b">{spell.Level ?? 'N/A'}</td>
+                <td className="p-3 border-b">{spell.School ?? 'N/A'}</td>
+                <td className="p-3 border-b">{spell.CastingTime ?? 'N/A'}</td>
+                <td className="p-3 border-b">{spell.Duration ?? 'N/A'}</td>
+                <td className="p-3 border-b">{spell.Range ?? 'N/A'}</td>
               </tr>
             ))
           )}
