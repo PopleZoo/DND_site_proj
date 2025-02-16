@@ -1,7 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
-import { Database } from './types/supabase'; // Ensure this path is correct
+import { Database } from './types/supabase';
 
-// Ensure environment variables are loaded
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
@@ -20,9 +19,8 @@ export const signInWithGoogle = async () => {
 
   if (error) {
     console.error('Error signing in with Google:', error);
-    return null; // Return null or handle the error as needed
+    return null;
   }
 
-  // If successful, the user will be redirected to the callback URL
-  return true; // Indicate success
+  return true;
 };

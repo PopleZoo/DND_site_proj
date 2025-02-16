@@ -5,25 +5,33 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#F09D51',
-          light: '#f4b77d',
-          dark: '#eb8424'
+          DEFAULT: '#6366F1', // Indigo
+          light: '#818CF8',
+          dark: '#4F46E5'
         },
         accent: {
-          DEFAULT: '#F06543',
-          light: '#f38b71',
-          dark: '#ec3f15'
+          DEFAULT: '#EC4899', // Pink
+          light: '#F472B6',
+          dark: '#DB2777'
         },
         dark: {
-          DEFAULT: '#313638',
-          light: '#4a4f52',
-          dark: '#181d1e'
+          DEFAULT: '#0F172A', // Slate 900
+          light: '#1E293B', // Slate 800
+          dark: '#020617'  // Slate 950
         },
         light: {
-          DEFAULT: '#E0DFD5',
-          lighter: '#E8E9EB',
-          darker: '#d7d5c4'
+          DEFAULT: '#F8FAFC', // Slate 50
+          lighter: '#FFFFFF',
+          darker: '#E2E8F0' // Slate 200
         }
+      },
+      fontFamily: {
+        'sans': ['Inter', 'system-ui', 'sans-serif'],
+        'display': ['Inter', 'system-ui', 'sans-serif']
+      },
+      boxShadow: {
+        'glow': '0 0 20px rgba(99, 102, 241, 0.15)',
+        'glow-accent': '0 0 20px rgba(236, 72, 153, 0.15)'
       }
     },
   },

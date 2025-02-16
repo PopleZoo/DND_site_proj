@@ -1,32 +1,28 @@
 import React from 'react';
 import { useCharacterCreationStore } from '../../../store/characterCreationStore';
-import { Beer } from 'lucide-react'; // Importing homebrew icon
-import { BeerOff } from 'lucide-react'; // Importing homebrew off icon
+import { Beer } from 'lucide-react';
 
 export default function HomebrewToggle() {
   const { homebrewEnabled, toggleHomebrew } = useCharacterCreationStore();
 
   return (
-    <div className="flex items-center justify-end mb-6 space-x-2">
-      <span className="text-sm text-[#E0DFD5]">Allow Homebrew</span>
+    <div className="flex justify-end items-center space-x-3 mb-8">
+      <span className="text-sm font-medium text-light/60">Allow Homebrew</span>
       <button
         onClick={toggleHomebrew}
-        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-          homebrewEnabled ? 'bg-[#F06543]' : 'bg-[#4a4f52]'
+        className={`relative w-14 h-8 rounded-full transition-colors duration-300 ${
+          homebrewEnabled ? 'bg-accent' : 'bg-dark-light'
         }`}
       >
-        <span
-          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-            homebrewEnabled ? 'translate-x-6' : 'translate-x-1'
+        <div
+          className={`absolute top-1 left-1 w-6 h-6 rounded-full transition-transform duration-300 ${
+            homebrewEnabled 
+              ? 'translate-x-6 bg-dark' 
+              : 'translate-x-0 bg-light/10'
           }`}
         />
       </button>
-      {homebrewEnabled ? (
-        <Beer className={`w-5 h-5 text-[#F06543]`} />
-      ) : (
-        <BeerOff className={`w-5 h-5 text-[#E0DFD5]`} />
-      )}
+      <Beer className={`h-5 w-5 ${homebrewEnabled ? 'text-accent' : 'text-light/40'}`} />
     </div>
   );
 }
-// Allow homebrew content, this homebrew content will be added from the user's collection of homebrew content.

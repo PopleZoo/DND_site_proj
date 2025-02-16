@@ -1,5 +1,4 @@
 import React from 'react';
-import Button from '../../ui/Button';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 interface StepNavigationProps {
@@ -18,25 +17,25 @@ export default function StepNavigation({
   hideNext = false,
 }: StepNavigationProps) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-[#313638] border-t border-[#F06543] shadow-lg z-10">
-      <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between">
-        <Button
+    <div className="fixed bottom-0 left-0 right-0 bg-dark-light/95 backdrop-blur-md border-t border-white/10 shadow-lg z-50">
+      <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+        <button
           onClick={onPrevious}
-          variant="outline"
-          icon={ArrowLeft}
-          className="text-[#E0DFD5]"
+          className="button secondary"
         >
-          Back
-        </Button>
+          <ArrowLeft className="h-5 w-5" />
+          <span>Back</span>
+        </button>
+        
         {!hideNext && (
-          <Button
+          <button
             onClick={onNext}
             disabled={disableNext}
-            icon={ArrowRight}
-            className="text-[#E0DFD5]"
+            className="button primary"
           >
-            {nextLabel}
-          </Button>
+            <span>{nextLabel}</span>
+            <ArrowRight className="h-5 w-5" />
+          </button>
         )}
       </div>
     </div>

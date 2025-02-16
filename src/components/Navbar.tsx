@@ -1,145 +1,130 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Beer, Swords } from 'lucide-react'; // Importing new icons
-import { GiBookmark, GiSwordman } from 'react-icons/gi'; // Campaign and user icons
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDiceD20 } from '@fortawesome/free-solid-svg-icons';
+import { Beer, Swords, BookOpen } from 'lucide-react';
+import { FaDiceD20 } from "react-icons/fa";
 import { useAuthStore } from '../store/authStore';
-import AuthModal from './auth/AuthModal';
-import { supabase } from '../lib/supabase';
 import { Session } from '@supabase/supabase-js';
+import { supabase } from '../lib/supabase';
 
-export default function Navbar() {
-  const [session, setSession] = useState<Session | null>(null); // Track session from Supabase
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [showUserMenu, setShowUserMenu] = useState(false);
+interface NavbarProps {
+  toggleModal: () => void;
+}
 
-  // Check session status on mount
-  useEffect(() => {
+export default function Navbar({ toggleModal }: NavbarProps) {
+  const [session, setSession] = useState<Session | null>(null);
+  const [menuVisible, setMenuVisible] = useState(false);
+
+  React.useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  // Sign out function
-  const signOut = async () => {
-    await supabase.auth.signOut();
-    setSession(null); // Clear session after sign-out
+  const handleMenuClick = (path: string) => {
+    // Handle menu item clicks
+    window.location.href = path;
+    setMenuVisible(false);
   };
 
-  // Handle clicks outside the dropdown to close it
-  const handleClickOutside = useCallback((e: MouseEvent) => {
-    if (!e.target.closest('.user-menu')) {
-      setShowUserMenu(false); // Close the menu if click is outside
-    }
-  }, []);
-
-  useEffect(() => {
-    document.addEventListener('click', handleClickOutside);
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, [handleClickOutside]);
-
   return (
-    <nav className="bg-dark border-b border-dark-light">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-2">
-              <FontAwesomeIcon icon={faDiceD20} className="h-8 w-8 text-accent" />
-              <span className="font-bold text-xl text-light">Nat20</span>
-            </Link>
-          </div>
+    <nav className="navbar relative z-10">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between h-16 items-center">
+          <Link to="/" className="flex items-center space-x-3">
+            <div className="relative group">
+              <FaDiceD20 className="h-10 w-10 text-accent transition-colors duration-300 group-hover:text-accent-light" />
+              <div className="absolute inset-0 bg-accent/20 blur-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </div>
+            <span className="text-2xl font-black text-light tracking-tight">NAT20</span>
+          </Link>
 
           <div className="hidden md:flex items-center space-x-8">
             <Link
               to="/characters"
-              className="flex items-center space-x-1 text-light hover:text-primary transition-colors"
+              className="flex items-center space-x-2 text-light/80 hover:text-light transition-colors"
             >
               <Swords className="h-5 w-5" />
-              <span>Characters</span>
+              <span className="font-medium">Characters</span>
             </Link>
             <Link
               to="/homebrew"
-              className="flex items-center space-x-1 text-light hover:text-primary transition-colors"
+              className="flex items-center space-x-2 text-light/80 hover:text-light transition-colors"
             >
               <Beer className="h-5 w-5" />
-              <span>Homebrew</span>
+              <span className="font-medium">Homebrew</span>
             </Link>
             <Link
               to="/campaigns"
-              className="flex items-center space-x-1 text-light hover:text-primary transition-colors"
+              className="flex items-center space-x-2 text-light/80 hover:text-light transition-colors"
             >
-              <GiBookmark className="h-5 w-5" />
-              <span>Campaigns</span>
+              <BookOpen className="h-5 w-5" />
+              <span className="font-medium">Campaigns</span>
             </Link>
 
-            <div className="relative user-menu">
-              {session ? (
+            {!session ? (
+              <button
+                onClick={toggleModal}
+                className="button primary"
+              >
+                Sign In
+              </button>
+            ) : (
+              <div className="relative">
                 <button
-                  onClick={() => setShowUserMenu((prev) => !prev)}
-                  className="flex items-center space-x-2 text-light hover:text-primary transition-colors"
+                  onClick={() => setMenuVisible(!menuVisible)}
+                  className="flex items-center space-x-2 text-light/80 hover:text-light transition-colors"
                 >
-                  <GiSwordman className="h-5 w-5" />
-                  <span>{session.user?.user_metadata?.full_name || session.user?.user_metadata?.username}</span>
+                  <FaDiceD20 className="h-5 w-5" />
+                  <span className="font-medium">
+                    {session.user.email?.split('@')[0]}
+                  </span>
                 </button>
-              ) : (
-                <button
-                  onClick={() => setShowAuthModal(true)}
-                  className="flex items-center space-x-2 text-light hover:text-primary transition-colors"
-                >
-                  <GiSwordman className="h-5 w-5" />
-                  <span>Sign In</span>
-                </button>
-              )}
 
-              {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-48 bg-dark-light rounded-lg shadow-lg py-2 z-50">
-                  <Link
-                    to="/mycharacters"
-                    className="block px-4 py-2 text-light hover:bg-dark hover:text-primary"
-                    onClick={() => setShowUserMenu(false)}
-                  >
-                    My Characters
-                  </Link>
-                  <Link
-                    to="/myhomebrew"
-                    className="block px-4 py-2 text-light hover:bg-dark hover:text-primary"
-                    onClick={() => setShowUserMenu(false)}
-                  >
-                    My Homebrew
-                  </Link>
-                  <Link
-                    to="/campaigns"
-                    className="block px-4 py-2 text-light hover:bg-dark hover:text-primary"
-                    onClick={() => setShowUserMenu(false)}
-                  >
-                    My Campaigns
-                  </Link>
-                  <button
-                    onClick={() => {
-                      signOut();
-                      setShowUserMenu(false);
-                    }}
-                    className="block w-full text-left px-4 py-2 text-light hover:bg-dark hover:text-primary"
-                  >
-                    Sign Out
-                  </button>
-                </div>
-              )}
-            </div>
+                {menuVisible && (
+                  <div className="absolute right-0 mt-2 w-48 py-2 bg-dark-light rounded-lg shadow-xl">
+                    <button
+                      onClick={() => handleMenuClick('/mycharacters')}
+                      className="block w-full px-4 py-2 text-left text-light/80 hover:text-light hover:bg-dark/50"
+                    >
+                      My Characters
+                    </button>
+                    <button
+                      onClick={() => handleMenuClick('/myhomebrew')}
+                      className="block w-full px-4 py-2 text-left text-light/80 hover:text-light hover:bg-dark/50"
+                    >
+                      My Homebrew
+                    </button>
+                    <button
+                      onClick={() => handleMenuClick('/campaigns')}
+                      className="block w-full px-4 py-2 text-left text-light/80 hover:text-light hover:bg-dark/50"
+                    >
+                      My Campaigns
+                    </button>
+                    <hr className="my-2 border-dark" />
+                    <button
+                      onClick={async () => {
+                        await supabase.auth.signOut();
+                        setMenuVisible(false);
+                      }}
+                      className="block w-full px-4 py-2 text-left text-light/80 hover:text-light hover:bg-dark/50"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
-
-      {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
     </nav>
   );
 }

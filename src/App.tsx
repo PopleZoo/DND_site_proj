@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
@@ -9,13 +9,22 @@ import MyHomebrew from './pages/usersPages/MyHomebrew';
 import Campaigns from './pages/Campaigns';
 import CharacterCreationWizard from './components/character-creation/CharacterCreationWizard';
 import AuthCallback from './components/auth/AuthCallback';
+import AuthModal from './components/auth/AuthModal';
 
 function App() {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const toggleModal = () => setIsModalVisible(!isModalVisible);
+
   return (
     <Router>
-      <div className="min-h-screen bg-[#313638]"> {/* Updated to use dark background */}
-        <Navbar />
-        <main className="max-w-7xl mx-auto px-4 py-6">
+      <div className="min-h-screen bg-dark">
+        <Navbar toggleModal={toggleModal} />
+        
+        {/* Render AuthModal here */}
+        {isModalVisible && <AuthModal onClose={toggleModal} />}
+        
+        <main className="container mx-auto px-4 py-8">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/characters" element={<Characters />} />

@@ -1,141 +1,146 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
   color-scheme: dark;
-  --color-primary: #140000; /* Updated to main.css color */
-  --color-accent: #2e0000; /* Updated to main.css color */
-  --color-dark: #4c1a1a; /* Updated to main.css color */
-  --color-light: #762828; /* Updated to main.css color */
-  --color-light-lighter: #000000; /* Updated to main.css color */
 }
 
 body {
-  @apply bg-dark text-light;
+  @apply bg-dark text-light font-sans antialiased;
+  background: linear-gradient(135deg, #111111 0%, #000000 100%);
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply font-sans font-bold tracking-tight;
 }
 
 .navbar {
-  @apply bg-dark border-b border-dark-light;
+  @apply bg-dark-light/95 backdrop-blur-md border-b border-white/5 sticky top-0 z-50;
 }
 
 .card {
-  @apply bg-dark-light border border-dark text-light rounded-lg shadow-lg;
+  @apply bg-dark-light/95 backdrop-blur-md border border-white/10 rounded-2xl shadow-xl
+         transition-all duration-300 hover:shadow-glow;
 }
 
 .button {
-  @apply px-4 py-2 rounded-lg font-medium transition-colors;
+  @apply px-6 py-3 rounded-full font-bold text-sm uppercase tracking-wider transition-all duration-200 
+         flex items-center gap-2 disabled:opacity-50;
 }
 
 .button.primary {
-  @apply bg-primary hover:bg-primary-dark text-dark;
+  @apply bg-accent hover:bg-accent-dark text-white shadow-lg
+         hover:shadow-accent/20 hover:-translate-y-0.5
+         disabled:hover:transform-none;
 }
 
 .button.secondary {
-  @apply bg-accent hover:bg-accent-dark text-light;
+  @apply bg-dark-light hover:bg-dark text-light border border-white/10 shadow-lg
+         hover:shadow-white/5 hover:-translate-y-0.5
+         disabled:hover:transform-none;
 }
 
 .button.outline {
-  @apply border border-primary text-primary hover:bg-primary/10;
+  @apply border-2 border-accent text-accent hover:bg-accent/10 shadow-lg
+         hover:shadow-accent/20 hover:-translate-y-0.5
+         disabled:hover:transform-none;
 }
 
 .input {
-  @apply bg-dark-light border border-dark rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent text-light;
+  @apply bg-dark-light/95 border border-white/10 rounded-full px-6 py-3 
+         focus:ring-2 focus:ring-accent focus:border-transparent text-light
+         placeholder-light/30 transition-all duration-200;
 }
 
 .select {
-  @apply bg-dark-light border border-dark rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent text-light;
+  @apply bg-dark-light/95 border border-white/10 rounded-full px-6 py-3
+         focus:ring-2 focus:ring-accent focus:border-transparent text-light
+         transition-all duration-200;
 }
 
 .modal {
-  @apply bg-dark border border-dark-light rounded-lg shadow-lg;
+  @apply bg-dark-light/95 border border-white/10 rounded-2xl shadow-2xl backdrop-blur-lg;
 }
 
 .tab {
-  @apply px-4 py-2 font-medium transition-colors;
+  @apply px-6 py-3 font-bold text-sm uppercase tracking-wider transition-all duration-200 relative;
 }
 
 .tab.active {
-  @apply text-primary border-b-2 border-primary;
+  @apply text-accent;
+}
+
+.tab.active::after {
+  content: '';
+  @apply absolute bottom-0 left-0 w-full h-0.5 bg-accent rounded-full;
 }
 
 .tab:not(.active) {
-  @apply text-light hover:text-primary;
+  @apply text-light/70 hover:text-light;
 }
 
-.card-header {
-  @apply bg-dark-light border-b border-dark p-4 rounded-t-lg;
+/* Glass Effect */
+.glass {
+  @apply bg-dark-light/95 backdrop-blur-lg border border-white/10 rounded-2xl;
 }
 
-.card-body {
-  @apply p-4;
+/* Grid Patterns */
+.grid-pattern {
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.05) 1px, transparent 0);
+  background-size: 24px 24px;
 }
 
-.card-footer {
-  @apply bg-dark-light border-t border-dark p-4 rounded-b-lg;
+/* Modern Loading Spinner */
+.loading-spinner {
+  @apply w-6 h-6 border-2 border-accent/20 border-t-accent rounded-full animate-spin;
 }
 
-.form-label {
-  @apply block text-sm font-medium text-light mb-1;
-}
-
-.form-hint {
-  @apply text-sm text-light-darker mt-1;
-}
-
-.form-error {
-  @apply text-sm text-accent mt-1;
-}
-
-.divider {
-  @apply border-t border-dark-light my-4;
-}
-
+/* Badge Styles */
 .badge {
-  @apply px-2 py-1 text-xs font-medium rounded-full;
+  @apply px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full;
 }
 
-.badge.primary {
-  @apply bg-primary text-dark;
+.badge-primary {
+  @apply bg-accent/20 text-accent;
 }
 
-.badge.secondary {
-  @apply bg-accent text-light;
+.badge-accent {
+  @apply bg-accent/20 text-accent;
 }
 
+/* Tooltip */
 .tooltip {
-  @apply bg-dark-light text-light px-2 py-1 text-sm rounded shadow-lg border border-dark;
+  @apply absolute z-50 px-3 py-2 text-xs font-medium bg-dark-light/95 border border-white/10 
+         rounded-lg shadow-lg backdrop-blur-md invisible opacity-0 transition-all duration-200;
 }
 
-/* Character Sheet Specific Styles */
-.character-sheet {
-  @apply bg-dark text-light;
+.tooltip-trigger:hover .tooltip {
+  @apply visible opacity-100;
 }
 
-.character-sheet-header {
-  @apply bg-dark-light border-b border-dark p-6;
+/* Custom Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
-.character-sheet-nav {
-  @apply bg-dark-light border-b border-dark;
+.animate-float {
+  animation: float 3s ease-in-out infinite;
 }
 
-.character-sheet-content {
-  @apply bg-dark p-6;
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  @apply w-2;
 }
 
-.stat-card {
-  @apply bg-dark-light p-4 rounded-lg border border-dark;
+::-webkit-scrollbar-track {
+  @apply bg-dark-light/50;
 }
 
-.feature-card {
-  @apply bg-dark-light p-4 rounded-lg border border-dark mb-4;
-}
-
-.spell-card {
-  @apply bg-dark-light p-4 rounded-lg border border-dark mb-4;
-}
-
-.inventory-item {
-  @apply bg-dark-light p-4 rounded-lg border border-dark mb-4;
+::-webkit-scrollbar-thumb {
+  @apply bg-accent/30 rounded-full hover:bg-accent/50 transition-colors duration-200;
 }

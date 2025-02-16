@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Character, Stats } from '../../types/character';
-import { useNavigate } from 'react-router-dom';
-import { Shield, Heart, Dumbbell, Dices, Scroll, Wand2, X, Edit, Save } from 'lucide-react';
+import { Character } from '../../types/character';
+import { Shield, Heart, Dumbbell, Scroll, Wand2, X, Edit, Save, FolderOpen, Sword } from 'lucide-react';
+import { FaDiceD20 } from "react-icons/fa";
 import AbilityScores from './sheet/AbilityScores';
-import AbilityChecks from './sheet/AbilityChecks'; // Import the AbilityChecks component
+import AbilityChecks from './sheet/AbilityChecks';
 import SpellList from './sheet/SpellList';
 import InventoryList from './sheet/InventoryList';
 import FeatureList from './sheet/FeatureList';
@@ -14,25 +14,9 @@ interface CharacterSheetProps {
   onUpdate?: (character: Character) => void;
 }
 
-const diceSides = {
-  d4: 4,
-  d6: 6,
-  d8: 8,
-  d10: 10,
-  d12: 12,
-  d20: 20,
-  d100: 100,
-};
-
 export default function CharacterSheet({ character, onClose, onUpdate }: CharacterSheetProps) {
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('abilities');
   const [isEditing, setIsEditing] = useState(false);
-  const [rollCount, setRollCount] = useState(1);
-  const [dieType, setDieType] = useState<'d4' | 'd6' | 'd8' | 'd10' | 'd12' | 'd20' | 'd100'>('d20');
-  const [modifier, setModifier] = useState(0);
-  const [rollResult, setRollResult] = useState<number | null>(null);
-  const [isRollOpen, setIsRollOpen] = useState(false); // State to control the collapsible dice roll section
 
   const handleEdit = () => {
     if (isEditing && onUpdate) {
@@ -41,181 +25,177 @@ export default function CharacterSheet({ character, onClose, onUpdate }: Charact
     setIsEditing(!isEditing);
   };
 
-  const stats: Stats[] = character?.stats || []; // Ensure stats is an array
-  const actions = Array.isArray(character?.actions) ? character.actions : [];
-  const bonusActions = character?.bonusActions || [];
-  const reactions = character?.reactions || [];
-
-  // Roll Dice function
-  const rollDice = () => {
-    const sides = diceSides[dieType];
-    const roll = Array.from({ length: rollCount }).map(() =>
-      Math.floor(Math.random() * sides) + 1
-    );
-    const result = roll.reduce((sum, val) => sum + val, 0) + modifier;
-    setRollResult(result);
-  };
-
   return (
-    <div className="h-full flex flex-col bg-dark text-light relative p-6">
-      {/* Header Section */}
-      <div className="bg-dark-light border-b border-dark p-4">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center space-x-4">
-            <div>
-              <h1 className="text-3xl font-bold">{character?.name || 'Unnamed Character'}</h1>
-              <p className="text-light-darker">
-                Level {character?.level || 1} {character?.race?.baseRaceName || 'Unknown Race'}{' '}
-                {character?.classes?.map((cls) => cls.name).join(', ') || 'Unknown Classes'}
-              </p>
-            </div>
-          </div>
-          <div className="flex space-x-2">
-            <button
-              onClick={handleEdit}
-              className="p-2 hover:bg-dark rounded-full transition-colors text-light hover:text-primary"
-            >
-              {isEditing ? <Save className="w-6 h-6" /> : <Edit className="w-6 h-6" />}
-            </button>
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-dark rounded-full transition-colors text-light hover:text-primary"
-            >
-              <X className="w-6 h-6" />
-            </button>
-          </div>
-        </div>
-
-        {/* Core Stats */}
-        <div className="grid grid-cols-3 gap-6 mt-6">
-          <div className="flex items-center space-x-3">
-            <Shield className="w-8 h-8 text-primary" />
-            <div>
-              <div className="text-light-darker text-sm">Armor Class</div>
-              <div className="text-2xl font-bold text-light">{character.armorClass}</div>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-3">
-            <Heart className="w-8 h-8 text-accent" />
-            <div>
-              <div className="text-light-darker text-sm">Hit Points</div>
-              <div className="text-2xl font-bold text-light">
-                {character.hitPoints.current}/{character.hitPoints.max}
-                {character.hitPoints.temp > 0 && <span className="text-sm ml-1">(+{character.hitPoints.temp})</span>}
+    <div className="min-h-screen bg-gradient-to-br from-dark to-dark-dark text-light">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-dark-light/95 backdrop-blur-md border-b border-white/10">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-4">
+              <FaDiceD20 className="h-10 w-10 text-accent" />
+              <div>
+                <h1 className="text-2xl font-black tracking-tight">{character.name}</h1>
+                <p className="text-light/60">
+                  Level {character.level} {character.race?.baseRaceName} {character.classes[0]?.name}
+                </p>
               </div>
             </div>
-          </div>
-
-          <div className="flex items-center space-x-3">
-            <Dumbbell className="w-8 h-8 text-primary" />
-            <div>
-              <div className="text-light-darker text-sm">Initiative</div>
-              <div className="text-2xl font-bold text-light">
-                {character.initiative >= 0 ? `+${character.initiative}` : character.initiative}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Navigation Tabs */}
-      <div className="bg-dark-light border-b border-dark p-2">
-        <div className="flex justify-center space-x-2 transition-colors">
-          {[ 
-            { id: 'abilities', name: 'Abilities', icon: Dices },
-            { id: 'features', name: 'Features', icon: Scroll },
-            { id: 'inventory', name: 'Inventory', icon: Shield },
-            { id: 'spells', name: 'Spells', icon: Wand2 },
-          ].map((tab) => {
-            const Icon = tab.icon;
-            return (
+            <div className="flex items-center space-x-2">
               <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`px-4 py-2 flex items-center space-x-2 transition-colors ${
-                  activeTab === tab.id
-                    ? 'text-primary border-b-2 border-primary'
-                    : 'text-light-darker hover:text-primary'
-                }`}
+                onClick={handleEdit}
+                className="p-2 text-light/60 hover:text-accent transition-colors rounded-lg"
               >
-                <Icon className="w-5 h-5" />
-                <span>{tab.name}</span>
+                {isEditing ? <Save className="h-5 w-5" /> : <Edit className="h-5 w-5" />}
               </button>
-            );
-          })}
+              <button
+                onClick={onClose}
+                className="p-2 text-light/60 hover:text-accent transition-colors rounded-lg"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Core Stats */}
+          <div className="grid grid-cols-4 gap-4 mt-6">
+            <div className="glass p-4 flex items-center space-x-3">
+              <Shield className="h-8 w-8 text-accent" />
+              <div>
+                <p className="text-sm text-light/60">Armor Class</p>
+                <p className="text-2xl font-bold">{character.armorClass}</p>
+              </div>
+            </div>
+
+            <div className="glass p-4 flex items-center space-x-3">
+              <Heart className="h-8 w-8 text-accent" />
+              <div>
+                <p className="text-sm text-light/60">Hit Points</p>
+                <p className="text-2xl font-bold">
+                  {character.hitPoints.current}/{character.hitPoints.max}
+                  {character.hitPoints.temp > 0 && (
+                    <span className="text-sm text-accent ml-1">+{character.hitPoints.temp}</span>
+                  )}
+                </p>
+              </div>
+            </div>
+
+            <div className="glass p-4 flex items-center space-x-3">
+              <Dumbbell className="h-8 w-8 text-accent" />
+              <div>
+                <p className="text-sm text-light/60">Initiative</p>
+                <p className="text-2xl font-bold">
+                  {character.initiative >= 0 ? `+${character.initiative}` : character.initiative}
+                </p>
+              </div>
+            </div>
+
+            <div className="glass p-4 flex items-center space-x-3">
+              <Sword className="h-8 w-8 text-accent" />
+              <div>
+                <p className="text-sm text-light/60">Speed</p>
+                <p className="text-2xl font-bold">{character.speed} ft.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation */}
+          <nav className="flex space-x-1 mt-6">
+            <button
+              onClick={() => setActiveTab('abilities')}
+              className={`tab ${activeTab === 'abilities' ? 'active' : ''}`}
+            >
+              <FaDiceD20 className="h-5 w-5" />
+              <span>Abilities</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('features')}
+              className={`tab ${activeTab === 'features' ? 'active' : ''}`}
+            >
+              <Scroll className="h-5 w-5" />
+              <span>Features</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('inventory')}
+              className={`tab ${activeTab === 'inventory' ? 'active' : ''}`}
+            >
+              <FolderOpen className="h-5 w-5" />
+              <span>Inventory</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('spells')}
+              className={`tab ${activeTab === 'spells' ? 'active' : ''}`}
+            >
+              <Wand2 className="h-5 w-5" />
+              <span>Spells</span>
+            </button>
+          </nav>
         </div>
-      </div>
+      </header>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-y-auto p-4 bg-dark flex">
-        {/* Core Stats Panel (left column) */}
-        <div className="w-1/3">
-          <AbilityScores stats={stats} isEditing={isEditing} />
-          <AbilityChecks abilityChecks={character?.abilityChecks || []} isEditing={isEditing} /> {/* Fix Ability Checks */}
-        </div>
-
-        {/* Central Content Area */}
-        <div className="w-1/3 px-6">
-          {activeTab === 'abilities' && (
-            <>
-              <div className="mt-6">
-                <h3 className="text-xl font-bold mb-2">Actions</h3>
-                <div className="space-y-4">
-                  {actions.map((action) => (
-                    <div key={action.id} className="text-light">
-                      <div className="font-semibold">{action.name}</div>
-                      <p>{action.description}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* Other Tabs */}
-          {activeTab === 'features' && (
-            <FeatureList features={character?.classes?.flatMap((cls) => cls.features) || []} isEditing={isEditing} />
-          )}
-          {activeTab === 'inventory' && (
-            <InventoryList
-              inventory={character?.inventory || []}
-              isEditing={isEditing}
-              onAddItem={(item) => onUpdate?.({ ...character, inventory: [...(character?.inventory || []), item] })}
-              onUpdateItem={(item) =>
-                onUpdate?.({
-                  ...character,
-                  inventory: (character?.inventory || []).map((inv) => (inv.id === item.id ? item : inv)),
-                })
-              }
-            />
-          )}
-          {activeTab === 'spells' && (
-            <SpellList
-              classSpells={character?.spells?.class || []}
-              raceSpells={character?.spells?.race || []}
-              itemSpells={character?.spells?.item || []}
-            />
-          )}
-        </div>
-
-        {/* Side Panel (right column) */}
-        <div className="w-1/3">
-          <div className="space-y-6">
-            {/* Conditions and Status Effects */}
-            <div>
-              <h3 className="text-lg font-semibold">Conditions & Status Effects</h3>
-              {/* List of conditions or status effects here */}
-            </div>
-
-            {/* Proficiencies */}
-            <div>
-              <h3 className="text-lg font-semibold">Proficiencies</h3>
-              {/* List of proficiencies here */}
+      <main className="container mx-auto px-6 py-8">
+        <div className="grid grid-cols-12 gap-8">
+          {/* Left Sidebar */}
+          <div className="col-span-4">
+            <AbilityScores stats={character.stats} isEditing={isEditing} />
+            <div className="mt-8">
+              <AbilityChecks abilityChecks={character.abilityChecks || []} isEditing={isEditing} />
             </div>
           </div>
+
+          {/* Main Content Area */}
+          <div className="col-span-8">
+            {activeTab === 'abilities' && (
+              <div className="space-y-8">
+                {/* Actions */}
+                <section className="glass p-6">
+                  <h2 className="text-xl font-bold mb-4 flex items-center space-x-2">
+                    <Sword className="h-5 w-5 text-accent" />
+                    <span>Actions</span>
+                  </h2>
+                  <div className="space-y-4">
+                    {character.actions?.map((action) => (
+                      <div key={action.id} className="p-4 bg-dark/50 rounded-lg">
+                        <h3 className="font-semibold">{action.name}</h3>
+                        <p className="text-light/60 mt-1">{action.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              </div>
+            )}
+
+            {activeTab === 'features' && (
+              <FeatureList
+                features={character.classes?.flatMap((cls) => cls.features) || []}
+                isEditing={isEditing}
+              />
+            )}
+
+            {activeTab === 'inventory' && (
+              <InventoryList
+                inventory={character.inventory || []}
+                isEditing={isEditing}
+                onAddItem={(item) => onUpdate?.({ ...character, inventory: [...(character.inventory || []), item] })}
+                onUpdateItem={(item) =>
+                  onUpdate?.({
+                    ...character,
+                    inventory: (character.inventory || []).map((inv) => (inv.id === item.id ? item : inv)),
+                  })
+                }
+              />
+            )}
+
+            {activeTab === 'spells' && (
+              <SpellList
+                classSpells={character.spells?.class || []}
+                raceSpells={character.spells?.race || []}
+                itemSpells={character.spells?.item || []}
+              />
+            )}
+          </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

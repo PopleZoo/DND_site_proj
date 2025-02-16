@@ -3,8 +3,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useCharacterCreationStore } from '../../store/characterCreationStore';
 import StepProgress from './navigation/StepProgress';
 import HomebrewToggle from './common/HomebrewToggle';
-
-
 import {
   SpeciesSelection,
   ClassSelection,
@@ -83,27 +81,25 @@ export default function CharacterCreationWizard() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#313638] text-[#E0DFD5]">
-      <div className="flex-1 overflow-y-auto pb-24">
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-[#F09D51] mb-2">
-              {editCharacter ? 'Edit Character' : 'Create Your Character'}
-            </h1>
-            <p className="text-[#E0DFD5]">
-              {editCharacter 
-                ? 'Modify your existing character'
-                : 'Follow the steps below to create your character'
-              }
-            </p>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-dark to-dark-dark">
+      <div className="container mx-auto px-6 py-12">
+        <div className="mb-8">
+          <h1 className="text-4xl font-black text-light mb-4">
+            {editCharacter ? 'Edit Character' : 'Create Your Character'}
+          </h1>
+          <p className="text-light/60">
+            {editCharacter 
+              ? 'Modify your existing character'
+              : 'Follow the steps below to create your character'
+            }
+          </p>
+        </div>
 
-          <HomebrewToggle />
-          <StepProgress />
-          
-          <div className="mt-8">
-            {renderStep()}
-          </div>
+        <HomebrewToggle />
+        <StepProgress />
+        
+        <div className="mt-12">
+          {renderStep()}
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../../lib/supabase"; // Adjust the import path as necessary
+import { supabase } from "../../lib/supabase";
 import { X } from "lucide-react";
-import { Session } from "@supabase/supabase-js"; // Import the Session type
+import { Session } from "@supabase/supabase-js";
 import { useNavigate } from "react-router-dom";
 
 interface AuthModalProps {
@@ -13,8 +13,8 @@ export default function AuthModal({ onClose }: AuthModalProps) {
   const [menuVisible, setMenuVisible] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [username, setUsername] = useState(""); // New state for username
-  const [isSignUp, setIsSignUp] = useState(false); // Toggle between sign-up and sign-in
+  const [username, setUsername] = useState("");
+  const [isSignUp, setIsSignUp] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -33,42 +33,49 @@ export default function AuthModal({ onClose }: AuthModalProps) {
   }, []);
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) console.error("Error signing out:", error);
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      setSession(null);
+      setUsername(null);
+      setError(null);
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      }
+      throw error;
+    }
   };
 
   const handleAuth = async () => {
-    setError(null); // Clear previous error
+    setError(null);
     if (isSignUp) {
-      // Sign-up logic with metadata
       const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
-            username, // Pass username to metadata
+            username,
           },
         },
       });
-  
+
       if (error) {
         setError(error.message);
       } else {
         alert("Check your email to confirm your account!");
       }
     } else {
-      // Sign-in logic
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
-  
+
       if (error) {
         setError(error.message);
       }
     }
   };
-  
 
   const signInWithGoogle = async () => {
     await supabase.auth.signInWithOAuth({
@@ -83,69 +90,103 @@ export default function AuthModal({ onClose }: AuthModalProps) {
 
   if (!session) {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-        <div className="bg-dark-light rounded-lg p-6 w-full max-w-md relative">
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 text-light hover:text-primary"
+      <>
+        {/* Backdrop */}
+        <div 
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100]"
+          onClick={onClose}
+        />
+        
+        {/* Modal */}
+        <div className="fixed inset-0 flex items-center justify-center z-[101] pointer-events-none">
+          <div 
+            className="bg-dark-light rounded-xl p-8 w-full max-w-md shadow-2xl pointer-events-auto transform transition-all duration-200 ease-out"
+            onClick={(e) => e.stopPropagation()}
           >
-            <X className="w-6 h-6" />
-          </button>
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 text-light/60 hover:text-light transition-colors"
+            >
+              <X className="w-6 h-6" />
+            </button>
 
-          <h2 className="text-2xl font-bold text-light mb-6">
-            {isSignUp ? "Sign Up" : "Sign In"}
-          </h2>
+            <h2 className="text-2xl font-bold text-light mb-6">
+              {isSignUp ? "Sign Up" : "Sign In"}
+            </h2>
 
-          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+            {error && (
+              <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                <p className="text-red-500 text-sm">{error}</p>
+              </div>
+            )}
 
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Username" // New input for username
-            className="w-full p-2 mb-4 border border-dark rounded-md bg-dark text-light"
-          />
+            {isSignUp && (
+              <div className="space-y-2 mb-4">
+                <label className="text-sm text-light/60">Username</label>
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="w-full p-3 bg-dark border border-dark-light rounded-lg text-light placeholder-light/30 focus:border-primary transition-colors"
+                  placeholder="Enter your username"
+                />
+              </div>
+            )}
 
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            className="w-full p-2 mb-4 border border-dark rounded-md bg-dark text-light"
-          />
+            <div className="space-y-2 mb-4">
+              <label className="text-sm text-light/60">Email</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full p-3 bg-dark border border-dark-light rounded-lg text-light placeholder-light/30 focus:border-primary transition-colors"
+                placeholder="Enter your email"
+              />
+            </div>
 
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            className="w-full p-2 mb-4 border border-dark rounded-md bg-dark text-light"
-          />
+            <div className="space-y-2 mb-6">
+              <label className="text-sm text-light/60">Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full p-3 bg-dark border border-dark-light rounded-lg text-light placeholder-light/30 focus:border-primary transition-colors"
+                placeholder="Enter your password"
+              />
+            </div>
 
-          <button
-            onClick={handleAuth}
-            className="w-full bg-primary hover:bg-primary-dark text-dark font-medium py-2 px-4 rounded-md"
-          >
-            {isSignUp ? "Sign Up" : "Sign In"}
-          </button>
+            <button
+              onClick={handleAuth}
+              className="w-full bg-primary hover:bg-primary-dark text-light font-medium py-3 px-4 rounded-lg transition-colors"
+            >
+              {isSignUp ? "Sign Up" : "Sign In"}
+            </button>
 
-          <button
-            onClick={() => setIsSignUp(!isSignUp)}
-            className="w-full mt-4 text-sm text-primary underline"
-          >
-            {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
-          </button>
+            <button
+              onClick={() => setIsSignUp(!isSignUp)}
+              className="w-full mt-4 text-sm text-primary hover:text-primary-light transition-colors"
+            >
+              {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
+            </button>
 
-          <hr className="my-4 border-dark" />
+            <div className="relative my-8">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-dark"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-dark-light text-light/60">Or continue with</span>
+              </div>
+            </div>
 
-          <button
-            onClick={signInWithGoogle}
-            className="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md"
-          >
-            Sign in with Google
-          </button>
+            <button
+              onClick={signInWithGoogle}
+              className="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+            >
+              Sign in with Google
+            </button>
+          </div>
         </div>
-      </div>
+      </>
     );
   } else {
     return (

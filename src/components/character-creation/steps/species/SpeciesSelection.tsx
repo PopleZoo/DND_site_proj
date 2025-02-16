@@ -22,25 +22,25 @@ function SubspeciesModal({ species, onSelect, onClose }: SubspeciesModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-[#4a4f52] rounded-lg w-full max-w-2xl p-6">
-        <h3 className="text-xl font-bold text-[#E0DFD5] mb-4">Choose a Subspecies</h3>
+      <div className="glass p-6 w-full max-w-2xl">
+        <h3 className="text-xl font-bold text-light mb-4">Choose a Subspecies</h3>
         
         <div className="space-y-4">
           {species.subraces?.map(subrace => (
             <div key={subrace.id} className="space-y-2">
               <button
                 onClick={() => setSelectedSubspecies(subrace.id)}
-                className={`w-full p-4 rounded-lg text-left ${
+                className={`w-full p-4 rounded-lg text-left transition-all ${
                   selectedSubspecies === subrace.id
-                    ? 'bg-[#F09D51]/20 border-2 border-[#F09D51]'
-                    : 'bg-[#313638] border-2 border-[#313638] hover:border-[#F09D51]/50'
+                    ? 'bg-accent/20 border-2 border-accent'
+                    : 'glass hover:border-accent/50'
                 }`}
               >
-                <h4 className="font-medium text-[#E0DFD5]">{subrace.name}</h4>
-                <p className="text-sm text-[#E0DFD5]/70">{subrace.description}</p>
+                <h4 className="font-medium text-light">{subrace.name}</h4>
+                <p className="text-light/60">{subrace.description}</p>
                 <ul className="mt-2 space-y-1">
                   {Array.isArray(subrace.traits) && subrace.traits.map((trait: any, index: number) => (
-                    <li key={index} className="text-sm text-[#E0DFD5]/70">
+                    <li key={index} className="text-light/60">
                       • {typeof trait === 'string' ? trait : trait.name}
                     </li>
                   ))}
@@ -49,19 +49,19 @@ function SubspeciesModal({ species, onSelect, onClose }: SubspeciesModalProps) {
 
               {selectedSubspecies === subrace.id && subrace.variants && (
                 <div className="ml-6 space-y-2">
-                  <h5 className="text-sm font-medium text-[#E0DFD5]">Choose a Variant</h5>
+                  <h5 className="text-sm font-medium text-light">Choose a Variant</h5>
                   {subrace.variants.map(variant => (
                     <button
                       key={variant.id}
                       onClick={() => setSelectedVariant(variant.id)}
                       className={`w-full p-3 rounded-lg text-left ${
                         selectedVariant === variant.id
-                          ? 'bg-[#F06543]/20 border-2 border-[#F06543]'
-                          : 'bg-[#313638] border-2 border-[#313638] hover:border-[#F06543]/50'
+                          ? 'bg-primary/20 border-2 border-primary'
+                          : 'glass hover:border-primary/50'
                       }`}
                     >
-                      <h6 className="font-medium text-[#E0DFD5]">{variant.name}</h6>
-                      <p className="text-sm text-[#E0DFD5]/70">{variant.description}</p>
+                      <h6 className="font-medium text-light">{variant.name}</h6>
+                      <p className="text-light/60">{variant.description}</p>
                     </button>
                   ))}
                 </div>
@@ -73,14 +73,14 @@ function SubspeciesModal({ species, onSelect, onClose }: SubspeciesModalProps) {
         <div className="flex justify-end space-x-4 mt-6">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg bg-[#313638] text-[#E0DFD5] hover:bg-[#313638]/80"
+            className="button secondary"
           >
             Cancel
           </button>
           <button
             onClick={handleConfirm}
             disabled={!selectedSubspecies || (species.subraces?.find(s => s.id === selectedSubspecies)?.variants && !selectedVariant)}
-            className="px-4 py-2 rounded-lg bg-[#F09D51] text-[#313638] hover:bg-[#F09D51]/80 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="button primary"
           >
             Confirm Selection
           </button>
@@ -142,37 +142,37 @@ export default function SpeciesSelection() {
             onClick={() => handleSpeciesSelect(speciesOption)}
             className={`relative p-6 rounded-lg text-left transition-all ${
               selectedSpecies === speciesOption.id
-                ? 'bg-[#F09D51]/20 border-2 border-[#F09D51]'
-                : 'bg-[#4a4f52] border-2 border-[#313638] hover:border-[#F09D51]/50'
+                ? 'bg-accent/20 border-2 border-accent'
+                : 'glass hover:border-accent/50'
             }`}
           >
             {speciesOption.isHomebrew && (
-              <span className="absolute top-4 right-4 px-2 py-1 bg-[#F06543]/20 text-[#F06543] text-xs rounded">
+              <span className="absolute top-4 right-4 px-2 py-1 bg-primary/20 text-primary text-xs rounded">
                 Homebrew
               </span>
             )}
 
             {selectedSpecies === speciesOption.id && (
-              <div className="absolute top-4 right-4 w-6 h-6 bg-[#F09D51] rounded-full flex items-center justify-center">
-                <Check className="w-4 h-4 text-[#313638]" />
+              <div className="absolute top-4 right-4 w-6 h-6 bg-accent rounded-full flex items-center justify-center">
+                <Check className="h-4 w-4 text-dark" />
               </div>
             )}
 
-            <h3 className="text-lg font-semibold text-[#E0DFD5] mb-2">{speciesOption.name}</h3>
-            <p className="text-sm text-[#E0DFD5]/70 mb-4">{speciesOption.description}</p>
+            <h3 className="text-lg font-semibold text-light mb-2">{speciesOption.name}</h3>
+            <p className="text-light/60 mb-4">{speciesOption.description}</p>
 
             <div className="space-y-3">
-              <div className="flex items-center space-x-4 text-sm text-[#E0DFD5]/70">
+              <div className="flex items-center space-x-4 text-light/60">
                 <span>Size: {speciesOption.size}</span>
                 <span>Speed: {speciesOption.speed} ft.</span>
               </div>
 
               <div>
-                <h4 className="text-sm font-medium text-[#E0DFD5] mb-1">Traits:</h4>
-                <ul className="text-sm text-[#E0DFD5]/70 space-y-1">
+                <h4 className="text-sm font-medium text-light mb-1">Traits:</h4>
+                <ul className="text-light/60 space-y-1">
                   {Array.isArray(speciesOption.traits) && speciesOption.traits.map((trait: any, index: number) => (
                     <li key={index} className="flex items-start space-x-2">
-                      <span className="text-[#F09D51] mt-1">•</span>
+                      <span className="text-accent mt-1">•</span>
                       <span className="flex-1">
                         {typeof trait === 'string' ? trait : trait.name}
                       </span>
