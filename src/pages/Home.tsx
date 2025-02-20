@@ -155,7 +155,7 @@ export default function Home() {
                   Master the art of blood magic with this unique spellcasting class.
                 </p>
                 <button 
-                  onClick={() => !user && setShowAuthModal(true)}
+                  //onClick={}
                   className="button primary"
                 >
                   Learn More
@@ -172,7 +172,7 @@ export default function Home() {
                   Wield the power of the heavens with these divine weapon options.
                 </p>
                 <button 
-                  onClick={() => !user && setShowAuthModal(true)}
+                  //onClick={}
                   className="button primary"
                 >
                   Explore

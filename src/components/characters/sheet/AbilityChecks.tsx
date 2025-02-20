@@ -74,8 +74,7 @@ const AbilityChecks: React.FC<AbilityChecksProps> = ({ abilityChecks, isEditing 
 
   return (
     <div className="space-y-6">
-      <h3 className="text-xl font-bold text-light">Ability Checks</h3> {/* Updated color */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-3 gap-2">
         {abilityChecksArray.map((stat) => (
           <div
             key={stat.abilityName}
@@ -87,16 +86,15 @@ const AbilityChecks: React.FC<AbilityChecksProps> = ({ abilityChecks, isEditing 
                 className={`w-4 h-4 rounded-full ${stat.modifier ? 'bg-primary' : 'bg-gray-500'}`} // Updated color
               />
               <div className="text-sm text-light">{stat.abilityName}</div> {/* Updated color */}
-            </div>
-
-            <div className="flex items-center space-x-2">
-              {/* Ability Check Modifier */}
               <button
                 onClick={() => rollDice(stat.modifier)}
-                className="text-2xl font-semibold text-light" // Updated color
+                className="text-sm font-semibold text-light" // Updated color
               >
                 {stat.modifier >= 0 ? `+${stat.modifier}` : stat.modifier}
               </button>
+            </div>
+
+            <div className="flex items-center space-x-2">
 
               {rollResult !== null && (
                 <div className="text-xl font-bold text-light"> {/* Updated color */}

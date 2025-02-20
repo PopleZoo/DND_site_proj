@@ -84,7 +84,7 @@ export default function Navbar({ toggleModal }: NavbarProps) {
                 >
                   <FaDiceD20 className="h-5 w-5" />
                   <span className="font-medium">
-                    {session.user.email?.split('@')[0]}
+                      {session.user.user_metadata.full_name ?? session.user.email?.split('@')[0]}
                   </span>
                 </button>
 

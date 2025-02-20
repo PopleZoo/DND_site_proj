@@ -1,0 +1,57 @@
+.character-sheet-container {
+  max-height: 95vh;
+  margin: 1rem auto;
+  padding: 1rem;
+  overflow-y: auto;
+  background: linear-gradient(to bottom right, #1a1a1a, #111111);
+  width: 98%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+
+
+.character-sheet-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(26, 26, 26, 0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1rem 0;
+  width: 100%;
+}
+
+
+.character-sheet-main {
+  padding: 1.5rem;
+  overflow-y: auto;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 2rem;
+}
+
+
+
+.character-sheet-section {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .character-sheet-container {
+    max-height: 85vh;
+    padding: 0.5rem;
+  }
+  
+  .character-sheet-main {
+    padding: 1rem;
+  }
+}

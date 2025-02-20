@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
+import { ClassFeature } from '../../types/character';
+import './CharacterSheet.css';
 import { Character } from '../../types/character';
+import DiceRoller from './DiceRoller';
 import { Shield, Heart, Dumbbell, Scroll, Wand2, X, Edit, Save, FolderOpen, Sword } from 'lucide-react';
 import { FaDiceD20 } from "react-icons/fa";
 import AbilityScores from './sheet/AbilityScores';
@@ -17,6 +20,7 @@ interface CharacterSheetProps {
 export default function CharacterSheet({ character, onClose, onUpdate }: CharacterSheetProps) {
   const [activeTab, setActiveTab] = useState('abilities');
   const [isEditing, setIsEditing] = useState(false);
+  const [showDiceRoller, setShowDiceRoller] = useState(false);
 
   const handleEdit = () => {
     if (isEditing && onUpdate) {
@@ -24,18 +28,17 @@ export default function CharacterSheet({ character, onClose, onUpdate }: Charact
     }
     setIsEditing(!isEditing);
   };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dark to-dark-dark text-light">
+    <div className="character-sheet-container min-h-screen bg-gradient-to-br from-dark to-dark-dark text-light">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-dark-light/95 backdrop-blur-md border-b border-white/10">
-        <div className="container mx-auto px-6 py-4">
+      <header className="character-sheet-header sticky top-0 z-50 bg-dark-light/95 backdrop-blur-md border-b border-white/10">
+        <div className="container mx-auto px-3 py-2">
           <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-4">
-              <FaDiceD20 className="h-10 w-10 text-accent" />
+            <div className="flex items-center space-x-3">
+              <FaDiceD20 className="h-8 w-8 text-accent" />
               <div>
-                <h1 className="text-2xl font-black tracking-tight">{character.name}</h1>
-                <p className="text-light/60">
+                <h1 className="text-xl font-black tracking-tight">{character.name}</h1>
+                <p className="text-sm text-light/60">
                   Level {character.level} {character.race?.baseRaceName} {character.classes[0]?.name}
                 </p>
               </div>
@@ -48,17 +51,24 @@ export default function CharacterSheet({ character, onClose, onUpdate }: Charact
                 {isEditing ? <Save className="h-5 w-5" /> : <Edit className="h-5 w-5" />}
               </button>
               <button
+                onClick={() => setShowDiceRoller(true)}
+                className="p-2 text-light/60 hover:text-accent transition-colors rounded-lg"
+              >
+                <FaDiceD20 className="h-5 w-5" />
+              </button>
+              <button
                 onClick={onClose}
                 className="p-2 text-light/60 hover:text-accent transition-colors rounded-lg"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
+    
           </div>
 
           {/* Core Stats */}
-          <div className="grid grid-cols-4 gap-4 mt-6">
-            <div className="glass p-4 flex items-center space-x-3">
+          <div className="grid grid-cols-4 gap-2 mt-3">
+            <div className="glass p-2 flex items-center space-x-2">
               <Shield className="h-8 w-8 text-accent" />
               <div>
                 <p className="text-sm text-light/60">Armor Class</p>
@@ -99,7 +109,7 @@ export default function CharacterSheet({ character, onClose, onUpdate }: Charact
           </div>
 
           {/* Navigation */}
-          <nav className="flex space-x-1 mt-6">
+          <nav className="flex space-x-1 mt-4">
             <button
               onClick={() => setActiveTab('abilities')}
               className={`tab ${activeTab === 'abilities' ? 'active' : ''}`}
@@ -137,16 +147,14 @@ export default function CharacterSheet({ character, onClose, onUpdate }: Charact
         <div className="grid grid-cols-12 gap-8">
           {/* Left Sidebar */}
           <div className="col-span-4">
-            <AbilityScores stats={character.stats} isEditing={isEditing} />
-            <div className="mt-8">
-              <AbilityChecks abilityChecks={character.abilityChecks || []} isEditing={isEditing} />
-            </div>
+            <AbilityChecks abilityChecks={character.abilityChecks || []} isEditing={isEditing} />
           </div>
 
           {/* Main Content Area */}
           <div className="col-span-8">
             {activeTab === 'abilities' && (
               <div className="space-y-8">
+                <AbilityScores stats={character.stats} isEditing={isEditing} />
                 {/* Actions */}
                 <section className="glass p-6">
                   <h2 className="text-xl font-bold mb-4 flex items-center space-x-2">
@@ -167,7 +175,7 @@ export default function CharacterSheet({ character, onClose, onUpdate }: Charact
 
             {activeTab === 'features' && (
               <FeatureList
-                features={character.classes?.flatMap((cls) => cls.features) || []}
+                features={character.classes?.flatMap((cls) => cls.features).filter((f): f is ClassFeature => f !== undefined) || []}
                 isEditing={isEditing}
               />
             )}
@@ -193,6 +201,12 @@ export default function CharacterSheet({ character, onClose, onUpdate }: Charact
                 itemSpells={character.spells?.item || []}
               />
             )}
+
+            {showDiceRoller && (
+                  <div className="dice-roller-overlay fixed inset-0 w-screen h-screen flex items-center justify-center bg-black/50 z-50">
+                  <DiceRoller onClose={() => setShowDiceRoller(false)} />
+                  </div>
+                )}
           </div>
         </div>
       </main>
