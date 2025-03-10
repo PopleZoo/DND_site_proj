@@ -4,6 +4,7 @@ import { Character } from '../types/character';
 interface CharacterStore {
   characters: Character[];
   activeCharacter: Character | null;
+  userCharacters: Character[]; // Added property
   addCharacter: (character: Character) => void;
   setActiveCharacter: (character: Character) => void;
   importCharacter: (jsonFile: string) => void;
@@ -12,6 +13,7 @@ interface CharacterStore {
 export const useCharacterStore = create<CharacterStore>((set) => ({
   characters: [],
   activeCharacter: null,
+  userCharacters: [], // Initialize userCharacters
   addCharacter: (character) =>
     set((state) => ({ characters: [...state.characters, character] })),
   setActiveCharacter: (character) => set({ activeCharacter: character }),

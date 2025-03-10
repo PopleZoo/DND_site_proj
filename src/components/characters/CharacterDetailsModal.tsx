@@ -18,8 +18,8 @@ const Modal = ({ onClose, character, children }: ModalProps) => {
         >
           X
         </button>
-        <CharacterSheet character={character} onClose={close} />
-        </div>
+        <CharacterSheet character={character} onClose={onClose} />
+      </div>
     </div>
   );
 };

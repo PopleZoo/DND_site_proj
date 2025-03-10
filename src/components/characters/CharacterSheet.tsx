@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { ClassFeature } from '../../types/character';
-import './CharacterSheet.css';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../../store/authStore';
+import { useCharacterStore } from '../../store/characterStore';
 import { Character } from '../../types/character';
 import DiceRoller from './DiceRoller';
 import { Shield, Heart, Dumbbell, Scroll, Wand2, X, Edit, Save, FolderOpen, Sword } from 'lucide-react';
@@ -21,17 +22,39 @@ export default function CharacterSheet({ character, onClose, onUpdate }: Charact
   const [activeTab, setActiveTab] = useState('abilities');
   const [isEditing, setIsEditing] = useState(false);
   const [showDiceRoller, setShowDiceRoller] = useState(false);
+  const navigate = useNavigate();
+
+  // Get user authentication data
+  const { user, isAuthenticated, openAuthModal } = useAuthStore();
+  const { userCharacters, addCharacter } = useCharacterStore();
+
+  // Check if the user owns this character
+  const isOwner = (userCharacters && Array.isArray(userCharacters)) ? userCharacters.some(c => c.id === character.id) : false;
+
+  useEffect(() => {
+    if (isAuthenticated && !isOwner && character) {
+      // If the user is logged in but doesn't own the character, add it to their collection
+      addCharacter(character);
+      navigate('/my-characters'); // Redirect to "My Characters" page
+    }
+  }, [isAuthenticated, isOwner, character, addCharacter, navigate]);
 
   const handleEdit = () => {
+    if (!isAuthenticated) {
+      openAuthModal(); // Prompt sign-up/sign-in modal
+      return;
+    }
+
     if (isEditing && onUpdate) {
       onUpdate(character);
     }
     setIsEditing(!isEditing);
   };
+
   return (
-    <div className="character-sheet-container min-h-screen bg-gradient-to-br from-dark to-dark-dark text-light">
-      {/* Header */}
-      <header className="character-sheet-header sticky top-0 z-50 bg-dark-light/95 backdrop-blur-md border-b border-white/10">
+<div className="character-sheet-container min-h-screen min-w-screen bg-gradient-to-br from-dark to-dark-dark text-light pt-10">
+{/* Header */}
+      <header className="character-sheet-header top-50 z-50 bg-dark-light/95 backdrop-blur-md border-b border-white/10">
         <div className="container mx-auto px-3 py-2">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-3">
@@ -43,13 +66,16 @@ export default function CharacterSheet({ character, onClose, onUpdate }: Charact
                 </p>
               </div>
             </div>
+
             <div className="flex items-center space-x-2">
-              <button
-                onClick={handleEdit}
-                className="p-2 text-light/60 hover:text-accent transition-colors rounded-lg"
-              >
-                {isEditing ? <Save className="h-5 w-5" /> : <Edit className="h-5 w-5" />}
-              </button>
+              {isOwner && (
+                <button
+                  onClick={handleEdit}
+                  className="p-2 text-light/60 hover:text-accent transition-colors rounded-lg"
+                >
+                  {isEditing ? <Save className="h-5 w-5" /> : <Edit className="h-5 w-5" />}
+                </button>
+              )}
               <button
                 onClick={() => setShowDiceRoller(true)}
                 className="p-2 text-light/60 hover:text-accent transition-colors rounded-lg"
@@ -63,7 +89,6 @@ export default function CharacterSheet({ character, onClose, onUpdate }: Charact
                 <X className="h-5 w-5" />
               </button>
             </div>
-    
           </div>
 
           {/* Core Stats */}
@@ -107,38 +132,6 @@ export default function CharacterSheet({ character, onClose, onUpdate }: Charact
               </div>
             </div>
           </div>
-
-          {/* Navigation */}
-          <nav className="flex space-x-1 mt-4">
-            <button
-              onClick={() => setActiveTab('abilities')}
-              className={`tab ${activeTab === 'abilities' ? 'active' : ''}`}
-            >
-              <FaDiceD20 className="h-5 w-5" />
-              <span>Abilities</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('features')}
-              className={`tab ${activeTab === 'features' ? 'active' : ''}`}
-            >
-              <Scroll className="h-5 w-5" />
-              <span>Features</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('inventory')}
-              className={`tab ${activeTab === 'inventory' ? 'active' : ''}`}
-            >
-              <FolderOpen className="h-5 w-5" />
-              <span>Inventory</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('spells')}
-              className={`tab ${activeTab === 'spells' ? 'active' : ''}`}
-            >
-              <Wand2 className="h-5 w-5" />
-              <span>Spells</span>
-            </button>
-          </nav>
         </div>
       </header>
 
@@ -152,64 +145,19 @@ export default function CharacterSheet({ character, onClose, onUpdate }: Charact
 
           {/* Main Content Area */}
           <div className="col-span-8">
-            {activeTab === 'abilities' && (
-              <div className="space-y-8">
-                <AbilityScores stats={character.stats} isEditing={isEditing} />
-                {/* Actions */}
-                <section className="glass p-6">
-                  <h2 className="text-xl font-bold mb-4 flex items-center space-x-2">
-                    <Sword className="h-5 w-5 text-accent" />
-                    <span>Actions</span>
-                  </h2>
-                  <div className="space-y-4">
-                    {character.actions?.map((action) => (
-                      <div key={action.id} className="p-4 bg-dark/50 rounded-lg">
-                        <h3 className="font-semibold">{action.name}</h3>
-                        <p className="text-light/60 mt-1">{action.description}</p>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              </div>
-            )}
-
-            {activeTab === 'features' && (
-              <FeatureList
-                features={character.classes?.flatMap((cls) => cls.features).filter((f): f is ClassFeature => f !== undefined) || []}
-                isEditing={isEditing}
-              />
-            )}
-
-            {activeTab === 'inventory' && (
-              <InventoryList
-                inventory={character.inventory || []}
-                isEditing={isEditing}
-                onAddItem={(item) => onUpdate?.({ ...character, inventory: [...(character.inventory || []), item] })}
-                onUpdateItem={(item) =>
-                  onUpdate?.({
-                    ...character,
-                    inventory: (character.inventory || []).map((inv) => (inv.id === item.id ? item : inv)),
-                  })
-                }
-              />
-            )}
-
-            {activeTab === 'spells' && (
-              <SpellList
-                classSpells={character.spells?.class || []}
-                raceSpells={character.spells?.race || []}
-                itemSpells={character.spells?.item || []}
-              />
-            )}
-
-            {showDiceRoller && (
-                  <div className="dice-roller-overlay fixed inset-0 w-screen h-screen flex items-center justify-center bg-black/50 z-50">
-                  <DiceRoller onClose={() => setShowDiceRoller(false)} />
-                  </div>
-                )}
+            {activeTab === 'abilities' && <AbilityScores stats={character.stats} isEditing={isEditing} />}
+            {activeTab === 'features' && <FeatureList features={character.classes.flatMap(cls => cls.features).filter((feature): feature is ClassFeature => feature !== undefined) || []} isEditing={isEditing} />}
+            {activeTab === 'inventory' && <InventoryList inventory={character.inventory || []} isEditing={isEditing} />}
+            {activeTab === 'spells' && <SpellList classSpells={character.spells.class || []} raceSpells={character.spells.race || []} itemSpells={character.spells.item || []} />}
           </div>
         </div>
       </main>
+
+      {showDiceRoller && (
+        <div className="dice-roller-overlay fixed inset-0 w-screen h-screen flex items-center justify-center bg-black/50 z-50">
+          <DiceRoller onClose={() => setShowDiceRoller(false)} />
+        </div>
+      )}
     </div>
   );
 }

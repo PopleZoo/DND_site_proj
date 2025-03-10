@@ -7,6 +7,8 @@ interface AuthState {
   username: string | null;
   loading: boolean;
   error: string | null;
+  isAuthenticated: boolean; // Added property
+  openAuthModal: () => void; // Added property
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, username: string) => Promise<void>;
   signOut: () => Promise<void>;
@@ -18,6 +20,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   username: null,
   loading: true,
+  isAuthenticated: false, // Added initial value
+  openAuthModal: () => {}, // Added initial value
   error: null,
   signIn: async (email: string, password: string) => {
     try {

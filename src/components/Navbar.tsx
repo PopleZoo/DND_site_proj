@@ -116,7 +116,7 @@ export default function Navbar({ toggleModal }: NavbarProps) {
                       }}
                       className="block w-full px-4 py-2 text-left text-light/80 hover:text-light hover:bg-dark/50"
                     >
-                      Sign Out
+                      Log Out
                     </button>
                   </div>
                 )}

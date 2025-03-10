@@ -55,6 +55,7 @@ export default function Home() {
 
 
       <section className="container mx-auto px-0"> {/* Removed left and right padding here */}
+      {/* Sign-out option removed from the home page */}
         <div className="grid md:grid-cols-3 gap-12">
           <div className="group">
             <div className="aspect-square mb-8 overflow-hidden rounded-2xl bg-gradient-to-br from-accent/20 to-accent/5 p-8">
